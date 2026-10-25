@@ -12,10 +12,12 @@ export async function savePirAction(fd: FormData): Promise<void> {
   if (!incident || incident.category !== "incident") back("/incidents", { error: "That incident doesn't exist." });
   const page = `/pir/${incident.key}`;
   const parts = ["summary", "impact", "root_cause", "timeline", "actions"].map((f) => str(fd, f, 50_000));
-  const publish = str(fd, "op") === "publish";
-  if (publish && (!parts[0] || !parts[2])) back(page, { error: "Write at least what happened and the root cause before publishing." });
+  // An incomplete review is still saved as a draft, so nothing typed is lost when publishing is refused.
+  const incomplete = !parts[0] || !parts[2];
+  const publish = str(fd, "op") === "publish" && !incomplete;
+  const refused = str(fd, "op") === "publish" && incomplete;
   const existing = get<{ id: string; status: string }>("select id, status from pirs where incident_id = ?", incident.id);
-  const status = publish ? "published" : (existing?.status ?? "draft");
+  const status = publish ? "published" : refused ? "draft" : (existing?.status ?? "draft");
   if (existing) {
     run("update pirs set summary = ?, impact = ?, root_cause = ?, timeline = ?, actions = ?, status = ?, updated_at = ? where id = ?", ...parts, status, now(), existing.id);
   } else {
@@ -31,5 +33,6 @@ export async function savePirAction(fd: FormData): Promise<void> {
     );
   }
   if (publish && existing?.status !== "published") logHistory(incident.id, user.id, "pir", null, "post-incident review published");
+  if (refused) back(page, { error: "Saved as a draft. Write at least what happened and why it happened, then publish." });
   back(page, { ok: publish ? "Published." : "Draft saved." });
 }

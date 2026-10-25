@@ -7,7 +7,10 @@
   h1 { @apply text-display; }
   h2 { @apply text-xl; }
   h3 { @apply text-lg; }
-  a { @apply text-accent underline-offset-2 hover:underline; }
+  /* Long words (a pasted path, a 200-character summary) wrap instead of widening the page. */
+  h1, h2, h3, td, dd { overflow-wrap: anywhere; }
+  /* Underlined so links don't rely on colour alone (WCAG 1.4.1); nav, cards and buttons opt out. */
+  a { @apply text-accent underline decoration-1 underline-offset-2; }
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
   input, select, textarea { @apply text-base; }
   ::placeholder { color: var(--text-muted); opacity: 1; }

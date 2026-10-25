@@ -21,9 +21,9 @@ export function MonthGrid({ year, month, events, label }: { year: number; month:
   const days = Array.from({ length: 42 }, (_, i) => new Date(start.getFullYear(), start.getMonth(), start.getDate() + i));
   const today = new Date().toDateString();
   return (
-    <div role="grid" aria-label={label} className="grid grid-cols-7 overflow-hidden rounded-lg border border-line">
+    <section aria-label={label} className="relative grid grid-cols-7 overflow-hidden rounded-lg border border-line">
       {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-        <div key={d} role="columnheader" className="border-b border-line bg-surface px-2 py-1.5 text-xs font-semibold text-muted">
+        <div key={d} aria-hidden="true" className="border-b border-line bg-surface px-2 py-1.5 text-xs font-semibold text-muted">
           {d}
         </div>
       ))}
@@ -31,8 +31,9 @@ export function MonthGrid({ year, month, events, label }: { year: number; month:
         const from = d.getTime();
         const here = events.filter((e) => e.start < from + DAY && Math.max(e.end, e.start + 1) > from);
         return (
-          <div key={from} role="gridcell" className={cx("min-h-24 border-b border-line p-1.5 text-xs", i % 7 !== 6 && "border-r", d.getMonth() !== month && "bg-surface text-muted")}>
-            <span className={cx("inline-block px-1.5", d.toDateString() === today && "rounded-full bg-accent text-on-accent")}>{d.getDate()}</span>
+          <div key={from} className={cx("min-h-24 border-b border-line p-1.5 text-xs", i % 7 !== 6 && "border-r", d.getMonth() !== month && "bg-surface text-muted")}>
+            <span aria-hidden="true" className={cx("inline-block px-1.5", d.toDateString() === today && "rounded-full bg-accent text-on-accent")}>{d.getDate()}</span>
+            <span className="sr-only">{d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}{here.length ? `, ${here.length} item${here.length === 1 ? "" : "s"}` : ""}</span>
             {here.map((e) => (
               <Link key={e.key} href={e.href} title={e.title} className={cx("mt-1 block truncate rounded-sm px-1.5 py-0.5 font-semibold no-underline hover:no-underline", TONE[e.tone])}>
                 {e.label}
@@ -41,6 +42,6 @@ export function MonthGrid({ year, month, events, label }: { year: number; month:
           </div>
         );
       })}
-    </div>
+    </section>
   );
 }

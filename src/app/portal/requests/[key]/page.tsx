@@ -16,6 +16,10 @@ import { approvals, comments, getItemByKey } from "@/lib/items";
 import type { FieldDef } from "@/lib/types";
 import { isDone, nextStatuses } from "@/lib/workflows";
 
+export async function generateMetadata({ params }: { params: Promise<{ key: string }> }) {
+  return { title: `Request ${(await params).key.toUpperCase()}` };
+}
+
 export default async function RequestView({ params, searchParams }: { params: Promise<{ key: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const user = await requireUser();
   const item = getItemByKey((await params).key);
