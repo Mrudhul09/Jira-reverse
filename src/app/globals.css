@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@layer base {
+  html { color-scheme: light; }
+  body { @apply bg-canvas text-fg font-sans text-base antialiased; }
+  h1 { @apply text-display; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+  a { @apply text-accent underline-offset-2 hover:underline; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 3px; }
+  input, select, textarea { @apply text-base; }
+  ::placeholder { color: var(--text-muted); opacity: 1; }
+}
+
+@layer components {
+  /* Native form controls share one look; see replica/design/components.md "Field". */
+  .control {
+    @apply w-full min-h-9 rounded-md border border-input bg-canvas px-2.5 py-1.5 text-fg;
+  }
+  .control:focus { outline: 2px solid var(--focus); outline-offset: 0; border-color: var(--focus); }
+  .control[aria-invalid="true"] { border-color: var(--danger); }
+  .control:disabled { @apply bg-sunken text-muted cursor-not-allowed; }
+  textarea.control { @apply min-h-24 leading-5; resize: vertical; }
+  .prose-plain { white-space: pre-wrap; overflow-wrap: anywhere; }
+}
