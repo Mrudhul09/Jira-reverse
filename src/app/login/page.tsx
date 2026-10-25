@@ -1,6 +1,6 @@
-import { LifeBuoy } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import { Banners, Card } from "@/components/ui";
 import { isAgent } from "@/lib/access";
 import { currentUser } from "@/lib/auth";
@@ -27,12 +27,12 @@ export default async function SignIn({ searchParams }: { searchParams: Promise<R
   return (
     <main className="grid min-h-screen place-items-center bg-surface p-6">
       <Card className="w-full max-w-sm space-y-5 p-7 shadow-card">
-        <div className="flex items-center gap-2 text-lg font-bold">
-          <LifeBuoy aria-hidden="true" className="size-6 text-accent" /> IT Help
+        <div className="text-accent">
+          <Logo markClass="size-7" />
         </div>
         <div>
           <h1 className="text-xl">Sign in</h1>
-          <p className="text-muted">Get help, or help someone else.</p>
+          <p className="text-muted">Ask for help, and always see where it's at.</p>
         </div>
         <Banners sp={sp} />
         <SignInForm />

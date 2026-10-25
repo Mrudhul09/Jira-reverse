@@ -1,5 +1,5 @@
-import { LifeBuoy } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import { Menus } from "@/components/shell/Menus";
 import { isAgent } from "@/lib/access";
 import { requireUser } from "@/lib/auth";
@@ -14,7 +14,7 @@ export default async function PortalLayout({ children }: { children: React.React
       <header className="bg-nav text-nav-fg">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-2.5 md:px-6">
           <Link href="/portal" className="flex items-center gap-2 text-lg font-bold text-nav-fg no-underline hover:no-underline">
-            <LifeBuoy aria-hidden="true" className="size-6" /> IT Help
+            <Logo />
           </Link>
           <nav aria-label="Help center" className="flex items-center gap-4">
             <Link href="/portal/requests" className={link}>

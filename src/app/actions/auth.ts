@@ -6,6 +6,7 @@ import { MIN_PASSWORD, checkPassword, createReset, endAllSessions, endSession, r
 import { get, now, run } from "@/lib/db";
 import { back, bool, str } from "@/lib/form";
 import { clientIp, recordSignIn, resetBlocked, signInBlocked } from "@/lib/limits";
+import { APP_NAME } from "@/lib/brand";
 import { appUrl, queueEmail } from "@/lib/mail";
 import { EMAIL_KINDS, type EmailKind } from "@/lib/notify";
 import { hashPassword, verifyPassword } from "@/lib/password";
@@ -52,7 +53,7 @@ export async function forgotAction(fd: FormData): Promise<void> {
     const token = createReset(user.id, ip);
     queueEmail(
       user.email,
-      "Reset your IT Help password",
+      `Reset your ${APP_NAME} password`,
       `Hi ${user.name.split(" ")[0]},\n\nSomeone (hopefully you) asked to reset your password. Choose a new one here within 30 minutes:\n\n${appUrl()}/login/reset?token=${token}\n\nDidn't ask? Ignore this email; your password stays the same.`,
     );
   }

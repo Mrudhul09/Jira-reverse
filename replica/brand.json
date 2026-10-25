@@ -1,0 +1,6 @@
+{
+  "name": "Glasswork",
+  "avoid": ["Jira", "Atlassian", "Jira Service Management", "Jira Service Desk", "JSM", "Opsgenie", "Statuspage", "Confluence", "Rovo"],
+  "domains": ["atlassian.com", "atlassian.net", "jira.com", "opsgenie.com", "statuspage.io"],
+  "colors": ["#0052CC", "#0065FF", "#2684FF", "#0747A6", "#4C9AFF", "#172B4D"]
+}

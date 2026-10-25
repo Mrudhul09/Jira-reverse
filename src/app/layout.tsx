@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { APP_NAME, TAGLINE } from "@/lib/brand";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "IT Help", template: "%s · IT Help" },
-  description: "IT service management for our team.",
+  title: { default: APP_NAME, template: `%s · ${APP_NAME}` },
+  description: TAGLINE,
 };
 
 export const dynamic = "force-dynamic";

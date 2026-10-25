@@ -7,7 +7,6 @@ import {
   CheckSquare,
   GitPullRequest,
   Inbox,
-  LifeBuoy,
   Network,
   PhoneCall,
   Plus,
@@ -18,6 +17,7 @@ import {
   Wrench,
 } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import { Menus } from "@/components/shell/Menus";
 import { NavLink } from "@/components/shell/NavLink";
 import { isAdmin } from "@/lib/access";
@@ -44,7 +44,7 @@ export default async function AgentLayout({ children }: { children: React.ReactN
     <div className="min-h-screen md:grid md:grid-cols-[240px_1fr]">
       <aside className="bg-nav px-2.5 py-4 text-nav-fg md:sticky md:top-0 md:h-screen md:overflow-y-auto" aria-label="Main">
         <Link href="/queues" className="mb-4 flex items-center gap-2 px-2 text-lg font-bold text-nav-fg no-underline hover:no-underline">
-          <LifeBuoy aria-hidden="true" className="size-6" /> IT Help
+          <Logo />
         </Link>
         <nav className="grid grid-cols-2 gap-x-2 md:block">
           <div className={group}>
