@@ -136,3 +136,13 @@ test.describe("F01 employee raises a request", () => {
     await expect(theo.getByRole("link", { name: mayas, exact: true })).toHaveCount(0);
   });
 });
+
+test("LAUNCH the welcome page works signed out and is accessible", async ({ as }) => {
+  const page = await as(null);
+  await page.goto("/login");
+  await page.getByRole("link", { name: "What is this?" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ask for help, and always see where it's at.");
+  await a11y(page);
+  const sideways = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(sideways).toBeLessThanOrEqual(2);
+});

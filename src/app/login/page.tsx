@@ -38,7 +38,10 @@ export default async function SignIn({ searchParams }: { searchParams: Promise<R
         <SignInForm />
         <div className="flex justify-between text-sm">
           <Link href="/login/forgot">Forgotten your password?</Link>
-          <Link href="/privacy">Privacy</Link>
+          <span className="flex gap-3">
+            <Link href="/welcome">What is this?</Link>
+            <Link href="/privacy">Privacy</Link>
+          </span>
         </div>
         {demo ? (
           <div className="rounded-md bg-surface p-3 text-sm">
