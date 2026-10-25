@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 import { ACTION_TYPES, type Action, type Conditions, type Trigger } from "@/lib/automation";
 import { get, now, run, tx, uid } from "@/lib/db";
 import { back, bool, id, ids, num, oneOf, str } from "@/lib/form";
+import { releaseHeld } from "@/lib/mail";
 import { hashPassword } from "@/lib/password";
 import type { SlaGoal } from "@/lib/sla";
 import type { FieldDef } from "@/lib/types";
@@ -87,7 +88,7 @@ export async function saveUserAction(fd: FormData): Promise<void> {
   const password = str(fd, "password", 200);
   if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) back(page, { error: "Enter a name and a real email address." });
   const clash = get<{ id: string }>("select id from users where email = ?", email);
-  if (clash && clash.id !== userId) back(page, { error: `${email} already belongs to someone.` });
+  if (clash && clash.id !== userId) back(page, { error: "That email address already belongs to someone." });
   if (password && password.length < 12) back(page, { error: "Passwords need at least 12 characters." });
   if (userId === admin.id && role !== "admin") back(page, { error: "You can't take away your own admin role." });
   const active = userId === admin.id || bool(fd, "active");
@@ -104,7 +105,35 @@ export async function saveUserAction(fd: FormData): Promise<void> {
     run("delete from team_members where user_id = ?", uidToSave);
     for (const t of ids(fd, "teams")) run("insert or ignore into team_members (team_id, user_id) values (?, ?)", t, uidToSave);
   });
-  back(page, { ok: userId ? "Saved." : `${name} can now sign in.` });
+  back(page, { ok: userId ? "Saved." : "Added. They can sign in now." });
+}
+
+// Removes someone's personal details but keeps the work they did, so history still adds up.
+export async function anonymiseAction(fd: FormData): Promise<void> {
+  const admin = await requireAdmin();
+  const userId = id(fd, "id");
+  const page = "/settings?tab=people";
+  if (!userId || userId === admin.id) back(page, { error: "Pick someone other than yourself." });
+  if (!bool(fd, "confirm")) back(page, { error: "Tick the box to confirm you want their details removed." });
+  tx(() => {
+    run(
+      "update users set name = 'Former colleague', email = ?, active = 0, email_notifications = 0, password_hash = ?, anonymised_at = ?, updated_at = ? where id = ? and system = 0",
+      `removed-${userId.slice(0, 8)}@invalid.local`,
+      hashPassword(uid() + uid()),
+      now(),
+      now(),
+      userId,
+    );
+    for (const t of ["sessions", "notifications", "team_members", "queue_stars", "password_resets"]) run(`delete from ${t} where user_id = ?`, userId);
+    run("delete from queues where owner_id = ?", userId);
+  });
+  back(page, { ok: "Their name and email are gone; their past work stays." });
+}
+
+export async function releaseHeldAction(): Promise<void> {
+  await requireAdmin();
+  const n = releaseHeld();
+  back("/settings?tab=email", { ok: n ? `${n} held email(s) queued to send.` : "Nothing was held." });
 }
 
 export async function saveTeamAction(fd: FormData): Promise<void> {

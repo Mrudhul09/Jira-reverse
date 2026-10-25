@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { raiseAlert } from "@/lib/alerts";
 import { get } from "@/lib/db";
+import { alertIntakeBlocked } from "@/lib/limits";
 
 function tokenMatches(given: string | null): boolean {
   const expected = process.env.ALERT_TOKEN;
@@ -15,6 +16,7 @@ function tokenMatches(given: string | null): boolean {
 export async function POST(req: Request) {
   if (!process.env.ALERT_TOKEN) return NextResponse.json({ error: "Alert intake is switched off. Set ALERT_TOKEN to turn it on." }, { status: 503 });
   if (!tokenMatches(req.headers.get("x-alert-token"))) return NextResponse.json({ error: "Missing or wrong x-alert-token header." }, { status: 401 });
+  if (alertIntakeBlocked()) return NextResponse.json({ error: "Too many alerts this minute. Group them with an alias." }, { status: 429, headers: { "retry-after": "60" } });
   let body: Record<string, unknown>;
   try {
     body = (await req.json()) as Record<string, unknown>;

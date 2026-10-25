@@ -1,4 +1,4 @@
-import { saveCalendarAction, saveCannedAction, saveGoalsAction, saveTeamAction, saveTypeAction, saveUserAction } from "@/app/actions/admin";
+import { anonymiseAction, releaseHeldAction, saveCalendarAction, saveCannedAction, saveGoalsAction, saveTeamAction, saveTypeAction, saveUserAction } from "@/app/actions/admin";
 import { ICON_NAMES } from "@/components/RequestTypeIcon";
 import { Banners, Card, Lozenge, PageHead, Panel, TabLinks } from "@/components/ui";
 import { Checkbox, SelectField, TextArea, TextField } from "@/components/ui/field";
@@ -6,6 +6,8 @@ import { SubmitButton } from "@/components/ui/submit";
 import { Table, Td, Th, Tr } from "@/components/ui/table";
 import { requireAdmin } from "@/lib/auth";
 import { all, parseJson } from "@/lib/db";
+import { ago, dateTime } from "@/lib/format";
+import { MAX_ATTEMPTS, mailConfigured } from "@/lib/mail";
 import { PRIORITY_LABEL } from "@/lib/priority";
 import type { Sla, SlaCalendar, SlaGoal } from "@/lib/sla";
 import type { FieldDef, RequestType, User } from "@/lib/types";
@@ -20,6 +22,7 @@ const TABS = [
   ["types", "What people can ask for"],
   ["slas", "Service levels"],
   ["replies", "Saved replies"],
+  ["email", "Email and jobs"],
 ] as const;
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const hhmm = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
@@ -40,6 +43,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
       {tab === "types" ? <Types teams={teams} /> : null}
       {tab === "slas" ? <Slas /> : null}
       {tab === "replies" ? <Replies /> : null}
+      {tab === "email" ? <EmailAndJobs /> : null}
     </>
   );
 }
@@ -120,8 +124,18 @@ function People({ teams, me }: { teams: Team[]; me: User }) {
                 <Td>
                   <details>
                     <summary className="cursor-pointer text-sm text-accent">Edit</summary>
-                    <Card className="mt-2 min-w-[22rem]">
+                    <Card className="mt-2 min-w-[22rem] space-y-4">
                       <PersonForm u={u} teams={teams} memberOf={ids} />
+                      {u.id !== me.id ? (
+                        <form action={anonymiseAction} className="space-y-2 border-t border-line pt-3">
+                          <input type="hidden" name="id" value={u.id} />
+                          <p className="text-sm text-muted">Leaving for good? Replace their name and email everywhere; the work they did stays.</p>
+                          <Checkbox name="confirm" label="Yes, remove their personal details" />
+                          <SubmitButton size="sm" variant="danger">
+                            Remove personal details
+                          </SubmitButton>
+                        </form>
+                      ) : null}
                     </Card>
                   </details>
                 </Td>
@@ -399,6 +413,94 @@ function Replies() {
           <SubmitButton size="sm">Add</SubmitButton>
         </Card>
       </form>
+    </div>
+  );
+}
+
+function EmailAndJobs() {
+  const mail = all<{ id: string; to_email: string; subject: string; status: string; attempts: number; last_error: string; created_at: number }>(
+    "select id, to_email, subject, status, attempts, last_error, created_at from outbox where status != 'sent' order by created_at desc limit 50",
+  );
+  const counts = all<{ status: string; n: number }>("select status, count(*) as n from outbox group by status");
+  const runs = all<{ job: string; ok: number; detail: string; started_at: number }>(
+    "select job, ok, detail, max(started_at) as started_at from job_runs group by job order by job",
+  );
+  const held = counts.find((c) => c.status === "held")?.n ?? 0;
+  return (
+    <div className="space-y-6">
+      <Panel title="Email">
+        <div className="space-y-3 text-sm">
+          <p>
+            {mailConfigured()
+              ? "Sending through Resend from the address in MAIL_FROM."
+              : "Not set up: emails are kept here instead of sent. Add RESEND_API_KEY and MAIL_FROM to .env.local and restart."}
+          </p>
+          <p className="text-muted">{counts.map((c) => `${c.n} ${c.status}`).join(" · ") || "No emails yet."}</p>
+          {held && mailConfigured() ? (
+            <form action={releaseHeldAction}>
+              <SubmitButton size="sm" variant="secondary">
+                Send the {held} held email{held === 1 ? "" : "s"} now
+              </SubmitButton>
+            </form>
+          ) : null}
+        </div>
+      </Panel>
+      {mail.length ? (
+        <Table>
+          <thead>
+            <tr>
+              <Th>To</Th>
+              <Th>Subject</Th>
+              <Th>State</Th>
+              <Th>Tries</Th>
+              <Th>Queued</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {mail.map((m) => (
+              <Tr key={m.id}>
+                <Td className="text-sm">{m.to_email}</Td>
+                <Td className="text-sm">{m.subject}</Td>
+                <Td>
+                  <Lozenge tone={m.status === "failed" ? "bad" : m.status === "held" ? "warning" : "todo"}>{m.status}</Lozenge>
+                  {m.last_error ? <span className="block text-xs text-danger">{m.last_error}</span> : null}
+                </Td>
+                <Td className="text-sm">
+                  {m.attempts} of {MAX_ATTEMPTS}
+                </Td>
+                <Td className="whitespace-nowrap text-sm text-muted">{ago(m.created_at)}</Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
+      ) : null}
+      <Panel title="Background jobs">
+        <p className="mb-3 text-sm text-muted">Run every minute: SLA warnings, alert escalation, email, and tidying old records.</p>
+        {runs.length ? (
+          <Table>
+            <thead>
+              <tr>
+                <Th>Job</Th>
+                <Th>Last run</Th>
+                <Th>Result</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {runs.map((r) => (
+                <Tr key={r.job}>
+                  <Td className="font-mono text-sm">{r.job}</Td>
+                  <Td className="text-sm" title={dateTime(r.started_at)}>
+                    {ago(r.started_at)}
+                  </Td>
+                  <Td className={r.ok ? "text-sm" : "text-sm text-danger"}>{r.detail}</Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <p className="text-sm text-danger">No job has run yet. The worker starts a few seconds after the app does.</p>
+        )}
+      </Panel>
     </div>
   );
 }

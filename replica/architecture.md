@@ -6,7 +6,7 @@ Working name until /replica-brand: "the app".
 
 | layer | choice | why |
 | --- | --- | --- |
-| web | Next.js 16.3 (App Router) + TypeScript 5.9 + React 19.3 | the pack default; one codebase for pages and server actions |
+| web | Next.js 16.4.2 (App Router; 16.3.2 had critical advisories, see backend.md) + TypeScript 5.9 + React 19.3 | the pack default; one codebase for pages and server actions |
 | styling | Tailwind 4.3, themed from replica-design's tokens | the pack default; components use roles (`bg-surface`), never raw hex |
 | mobile | none | internal web tool; responsive layout covers phones |
 | database | SQLite, through Node 24's built-in `node:sqlite` | swap from Postgres: internal tool on our own Windows server, no cloud accounts, nothing to install or run. One file, backed up by copying |

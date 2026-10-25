@@ -27,7 +27,7 @@ recon map for layout and hierarchy, not measured pixels.
 | S18 services | 2026-10-25 | done | | |
 | S19 assets | 2026-10-25 | done | | attribute types incl. links between objects, and CSV import that resolves links by name |
 | S20 alerts | 2026-10-25 | done | | |
-| S21 on call | 2026-10-25 | partial | escalation is configured and shown; the timer that escalates is a /replica-backend job | |
+| S21 on call | 2026-10-25 | done | escalation timer added in /replica-backend | |
 | S22 automation | 2026-10-25 | done | | rules must not trigger each other; a guard stops loops |
 | S23 reports | 2026-10-25 | done | | |
 | S24 settings | 2026-10-25 | done | | |

@@ -53,11 +53,11 @@ Alerts list acknowledge close,alerts,should,yes,yes,
 Create incident from alert,alerts,should,yes,yes,
 Alert intake API with de-duplication,alerts,could,yes,yes,
 On-call schedules and who is on call now,on-call,should,yes,yes,
-Escalation policy,on-call,could,yes,partial,set per schedule and shown; the timed escalation job comes with /replica-backend
+Escalation policy,on-call,could,yes,yes,"worker escalates unacknowledged alerts once, after the schedule's limit"
 Automation rules (when if then),automation,should,yes,yes,
 Automation audit log,automation,could,yes,yes,
 In-app notifications,notifications,should,yes,yes,
-Email notifications,notifications,should,yes,no,next: /replica-backend (Resend or outbox)
+Email notifications,notifications,should,yes,yes,through Resend with our key; held in the outbox until the key is set
 Reports: created vs resolved SLA success workload,reports,should,yes,yes,
 CSAT rating after resolution,reports,could,yes,yes,
 Admin: request types and fields,settings,must,yes,yes,

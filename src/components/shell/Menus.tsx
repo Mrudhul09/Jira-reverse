@@ -58,6 +58,9 @@ export function Menus({ user, dark = false }: { user: User; dark?: boolean }) {
               {user.email} · {user.role}
             </div>
           </div>
+          <Link href="/portal/account" className="block rounded-md px-2.5 py-2 text-fg no-underline hover:bg-surface hover:no-underline">
+            Your account
+          </Link>
           {isAgent(user) ? (
             <Link href="/portal" className="block rounded-md px-2.5 py-2 text-fg no-underline hover:bg-surface hover:no-underline">
               Open the help center

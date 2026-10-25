@@ -72,7 +72,7 @@ export async function createWorkAction(fd: FormData): Promise<void> {
   const onBehalf = str(fd, "reporterEmail", 200);
   if (onBehalf) {
     const r = get<{ id: string }>("select id from users where email = ? and active = 1 and system = 0", onBehalf);
-    if (!r) back(page, { error: `Nobody active has the email ${onBehalf}.` });
+    if (!r) back(page, { error: "Nobody active has that email address." });
     reporterId = r.id;
   }
   const impact = asLevel(num(fd, "impact"));

@@ -1,5 +1,6 @@
 import { get, nextNumber, run, tx, uid } from "./db";
 import { hashPassword } from "./password";
+import { seedBase } from "./seed-base";
 import type { FieldDef } from "./types";
 import { WORKFLOWS, type Category } from "./workflows";
 
@@ -8,8 +9,10 @@ export const DEMO_PASSWORD = "demo-itsm-2026";
 const HOUR = 3_600_000;
 
 // Demo data so every screen has something real to show. Every name is invented.
+// SEED_DEMO=0 starts a real install instead (see seed-base.ts).
 export function seedIfEmpty(): void {
   if ((get<{ n: number }>("select count(*) as n from users")?.n ?? 0) > 0) return;
+  if (process.env.SEED_DEMO === "0") return tx(seedBase);
   const t0 = Date.now();
   const at = (hoursAgo: number) => t0 - Math.round(hoursAgo * HOUR);
 
