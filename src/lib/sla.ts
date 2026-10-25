@@ -31,6 +31,8 @@ export interface Sla {
 
 export interface SlaState extends SlaView {
   slaId: string;
+  metric: Sla["metric"];
+  allDay: boolean;
   elapsedMs: number;
 }
 
@@ -111,7 +113,7 @@ export function slaStates(item: Item, changes: StatusChange[], config: ReturnTyp
     const goalMs = goal.minutes * MIN;
     const remainingMs = goalMs - elapsed;
     const state = remainingMs < 0 ? "breached" : stopped ? "met" : paused ? "paused" : "running";
-    out.push({ slaId: sla.id, name: sla.name, goalMs, elapsedMs: elapsed, remainingMs, state, warning: state === "running" && remainingMs < goalMs * 0.25, calendar: cal.name });
+    out.push({ slaId: sla.id, metric: sla.metric, allDay: !!cal.always_on, name: sla.name, goalMs, elapsedMs: elapsed, remainingMs, state, warning: state === "running" && remainingMs < goalMs * 0.25, calendar: cal.name });
   }
   return out;
 }

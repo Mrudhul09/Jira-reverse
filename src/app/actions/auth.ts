@@ -7,6 +7,7 @@ import { get, now, run } from "@/lib/db";
 import { back, bool, str } from "@/lib/form";
 import { clientIp, recordSignIn, resetBlocked, signInBlocked } from "@/lib/limits";
 import { appUrl, queueEmail } from "@/lib/mail";
+import { EMAIL_KINDS, type EmailKind } from "@/lib/notify";
 import { hashPassword, verifyPassword } from "@/lib/password";
 
 export async function signInAction(_prev: { error?: string } | undefined, fd: FormData): Promise<{ error?: string }> {
@@ -83,6 +84,7 @@ export async function changePasswordAction(fd: FormData): Promise<void> {
 
 export async function emailPrefsAction(fd: FormData): Promise<void> {
   const user = await requireUser();
-  run("update users set email_notifications = ?, updated_at = ? where id = ?", bool(fd, "email") ? 1 : 0, now(), user.id);
+  const kinds = fd.getAll("kinds").filter((k): k is EmailKind => typeof k === "string" && k in EMAIL_KINDS);
+  run("update users set email_notifications = ?, email_kinds = ?, updated_at = ? where id = ?", bool(fd, "email") ? 1 : 0, JSON.stringify(kinds), now(), user.id);
   back("/portal/account", { ok: "Saved." });
 }

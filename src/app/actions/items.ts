@@ -5,7 +5,7 @@ import { canEditItem, canMoveItem, canRaise, canViewItem, isAgent } from "@/lib/
 import { requireAgent, requireUser } from "@/lib/auth";
 import { get, now, parseJson, run, uid, type Param } from "@/lib/db";
 import { back, bool, dateTime, id, ids, num, oneOf, safePath, str } from "@/lib/form";
-import { addComment, addLink, createItem, decide, getItem, getItemByKey, logHistory, moveItem, updateItem, type Editable } from "@/lib/items";
+import { addComment, addLink, createItem, decide, getItem, getItemByKey, logHistory, mergeItem, moveItem, updateItem, type Editable } from "@/lib/items";
 import { notify } from "@/lib/notify";
 import { asLevel, asPriority, priorityFrom } from "@/lib/priority";
 import type { FieldDef, RequestType, User } from "@/lib/types";
@@ -209,7 +209,7 @@ export async function peopleAction(fd: FormData): Promise<void> {
     logHistory(item.id, user.id, kind, person.name, "removed");
   } else if (run("insert or ignore into item_people (item_id, user_id, kind, created_at) values (?, ?, ?, ?)", item.id, personId, kind, now())) {
     logHistory(item.id, user.id, kind, null, person.name);
-    notify(personId, item.id, kind === "responder" ? `You're a responder on ${item.key}: ${item.summary}` : `You'll get updates on ${item.key}: ${item.summary}`);
+    notify(personId, item.id, kind === "responder" ? `You're a responder on ${item.key}: ${item.summary}` : `You'll get updates on ${item.key}: ${item.summary}`, kind === "responder" ? "assigned" : "alerts");
   }
   back(page);
 }
@@ -300,4 +300,31 @@ export async function findAction(fd: FormData): Promise<void> {
   const item = key ? getItemByKey(key) : undefined;
   if (item) redirect(`/items/${item.key}`);
   redirect(`/search?q=${encodeURIComponent(key)}`);
+}
+
+export async function mergeAction(fd: FormData): Promise<void> {
+  const user = await requireAgent();
+  const item = visibleItem(fd, user);
+  const into = str(fd, "into", 30).toUpperCase();
+  const r = mergeItem(item.id, into, user);
+  if (!r.ok) back(`/items/${item.key}`, { error: r.error });
+  redirect(`/items/${into}?ok=${encodeURIComponent(`${item.key} merged into this one.`)}`);
+}
+
+// Resolve in one step: what fixed it, an optional reply to the requester, and the move to done.
+export async function resolveAction(fd: FormData): Promise<void> {
+  const user = await requireAgent();
+  const item = visibleItem(fd, user);
+  const page = `/items/${item.key}`;
+  const to = str(fd, "to", 60);
+  const resolution = str(fd, "resolution", 20_000);
+  if (!resolution) back(page, { error: "Write what fixed it." });
+  updateItem(item.id, user.id, { resolution });
+  const reply = str(fd, "reply", 20_000);
+  if (reply) {
+    const c = addComment(item.id, user, reply, { internal: false });
+    if (!c.ok) back(page, { error: c.error });
+  }
+  const m = moveItem(item.id, to, user.id);
+  back(page, m.ok ? { ok: `${to}.` } : { error: m.error });
 }

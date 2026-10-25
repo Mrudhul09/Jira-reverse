@@ -236,7 +236,11 @@ export async function saveGoalsAction(fd: FormData): Promise<void> {
     const p = num(fd, `g${n}_priority`);
     goals.push({ category: CATEGORIES.includes(cat as Category) ? cat : null, priority: p && p >= 1 && p <= 5 ? p : null, minutes, calendar_id: calendar });
   }
-  run("update slas set goals_json = ?, enabled = ?, updated_at = ? where id = ?", JSON.stringify(goals), bool(fd, "enabled") ? 1 : 0, now(), slaId);
+  const name = str(fd, "name", 80);
+  if (!name) back(page, { error: "An SLA needs a name." });
+  const clash = get<{ id: string }>("select id from slas where name = ?", name);
+  if (clash && clash.id !== slaId) back(page, { error: "Another SLA already has that name." });
+  run("update slas set name = ?, goals_json = ?, enabled = ?, updated_at = ? where id = ?", name, JSON.stringify(goals), bool(fd, "enabled") ? 1 : 0, now(), slaId);
   back(page, { ok: "Goals saved. They're checked top to bottom and the first match counts." });
 }
 

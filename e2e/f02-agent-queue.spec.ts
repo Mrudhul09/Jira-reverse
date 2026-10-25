@@ -86,7 +86,7 @@ test.describe("F02 agent works the queue", () => {
     const omar = await as(AGENT);
     await omar.goto("/queues");
     await field(omar, "Status").selectOption("Pending");
-    await omar.getByRole("button", { name: "Filter" }).click();
+    await omar.getByRole("button", { name: "Apply" }).click();
     await expect(omar.getByRole("link", { name: /Wi-Fi crawls/ })).toBeVisible();
     await expect(omar.getByRole("link", { name: /Payroll shows/ })).toHaveCount(0);
     await omar.getByRole("link", { name: "Board", exact: true }).click();

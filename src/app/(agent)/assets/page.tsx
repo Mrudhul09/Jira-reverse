@@ -91,6 +91,9 @@ export default async function Assets({ searchParams }: { searchParams: Promise<R
               <h2>
                 {type.name} <span className="text-base text-muted">({objects.length})</span>
               </h2>
+              <a href={`/api/assets/export?type=${type.id}`} download className="text-sm">
+                Download as CSV
+              </a>
               <form role="search" className="flex">
                 <input type="hidden" name="type" value={type.id} />
                 <label htmlFor="aq" className="sr-only">

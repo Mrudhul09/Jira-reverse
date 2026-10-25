@@ -59,7 +59,7 @@ export function raiseAlert(a: NewAlert): { alert: Alert; repeat: boolean } {
       t,
     ),
   );
-  for (const u of onCallFor(a.teamId)) notify(u, null, `Alert P${a.priority ?? 3}: ${a.message}`);
+  for (const u of onCallFor(a.teamId)) notify(u, null, `Alert P${a.priority ?? 3}: ${a.message}`, "alerts");
   runAutomation("alert_created", { alertId: id });
   return { alert: getAlert(id)!, repeat: false };
 }

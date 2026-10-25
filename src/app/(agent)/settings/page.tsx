@@ -291,6 +291,7 @@ function Slas() {
                 </div>
               }
             >
+              <TextField id={`sla-name-${sla.id.slice(0, 8)}`} name="name" label="Name" required maxLength={80} defaultValue={sla.name} className="mb-3 max-w-sm" />
               <p className="mb-3 text-sm text-muted">
                 {sla.metric === "first_response"
                   ? "Starts when work is raised; stops at the first reply from the IT team the requester can see, or when it's done."

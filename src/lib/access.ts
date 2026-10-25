@@ -8,6 +8,7 @@ export const isAdmin = (u: User | null | undefined): boolean => !!u && u.role ==
 export function canViewItem(u: User, item: Pick<Item, "id" | "reporter_id">): boolean {
   if (isAgent(u)) return true;
   if (item.reporter_id === u.id) return true;
+  if (get("select 1 from item_people where item_id = ? and user_id = ? and kind = 'stakeholder'", item.id, u.id)) return true;
   return !!get("select 1 from approvals where item_id = ? and approver_id = ?", item.id, u.id);
 }
 

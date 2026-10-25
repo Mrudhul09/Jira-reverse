@@ -58,8 +58,9 @@ Compared against what Atlassian's public docs describe (recon sources), not agai
 
 **Shippable** for internal use: every must-have done, feature score 94.9 (80+ needed), no open S1 or S2.
 
-Not yet **better than the original**: that needs the fixes `/replica-entrepreneur` finds in what Jira
-Service Management's own users complain about. Next: `/replica-entrepreneur`.
+**Better than the original** on the points its users push hardest for (updated after `/replica-entrepreneur`):
+all 8 fixes in `fixes.md` are built and tested, including four Atlassian feature requests with 655 to 1,515
+votes each that have been open for 2 to 12 years. Still behind it on depth (see the missing list).
 
 ## Top five to build next
 

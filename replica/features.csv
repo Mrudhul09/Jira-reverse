@@ -75,3 +75,11 @@ Search with a query language (JQL / AQL style),queues,could,yes,no,found in /rep
 Deployment tracking and gating from CI/CD,changes,could,yes,no,found in /replica-diff: recon source 17
 Several service projects with their own queues and settings,settings,could,yes,no,found in /replica-diff: one service desk for the whole company
 Customer organisations (group requesters by department),help center,could,yes,no,found in /replica-diff: recon source 1
+Requester sees when to expect a reply and the status of linked work,help center,should,no,yes,fix 1: JSDCLOUD-325 (655 votes) and JSDCLOUD-4636 (857)
+Emails sent panel on every work item,work items,should,no,yes,fix 2: JSDCLOUD-4698 (1515 votes)
+Merge a duplicate into another work item,work items,should,no,yes,fix 3: JSDCLOUD-4685 (1239 votes)
+Resolve with a note and a saved reply in one step,work items,should,no,yes,fix 4: JSDCLOUD-12765 (1160 votes)
+Choose which emails you get,notifications,should,no,yes,fix 5: notifications theme 9 items 3 sources
+Sort queues by priority SLA age or update,queues,could,no,yes,fix 6: 2 App Store reviews (thin)
+Export assets to CSV and rename SLAs,assets,could,no,yes,fix 7: JSDCLOUD-9967 (585) and JSDCLOUD-119 (435)
+Form answers in emails to the requester,notifications,could,no,yes,fix 8: JSDCLOUD-4642 (1289 votes)

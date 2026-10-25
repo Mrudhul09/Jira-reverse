@@ -114,7 +114,7 @@ export function createItem(n: NewItem): ItemRow {
     if (approverId) addApprovals(id, [approverId], "all", "Approval");
   });
   const item = getItem(id)!;
-  if (item.assignee_id) notify(item.assignee_id, id, `${item.key} was assigned to you: ${item.summary}`);
+  if (item.assignee_id) notify(item.assignee_id, id, `${item.key} was assigned to you: ${item.summary}`, "assigned");
   else notifyTeam(teamId, id, `New ${CATEGORY_LABEL[n.category].toLowerCase()} ${item.key}: ${item.summary}`, n.actorId);
   runAutomation("item_created", { itemId: id });
   return getItem(id)!;
@@ -124,7 +124,7 @@ function addApprovals(itemId: string, approverIds: string[], rule: "all" | "any"
   const key = get<{ key: string }>("select key from items where id = ?", itemId)?.key ?? "";
   for (const a of Array.from(new Set(approverIds))) {
     run("insert or ignore into approvals (id, item_id, approver_id, stage, rule, created_at) values (?, ?, ?, ?, ?, ?)", uid(), itemId, a, stage, rule, now());
-    notify(a, itemId, `Your approval is needed on ${key} (${stage})`);
+    notify(a, itemId, `Your approval is needed on ${key} (${stage})`, "approvals");
   }
 }
 
@@ -172,7 +172,7 @@ export function moveItem(itemId: string, to: string, actorId: string | null, opt
       else addApprovals(itemId, peerIds(item), "any", `Peer review ${round(itemId, "Peer review")}`);
     }
   });
-  if (actorId !== item.reporter_id) notify(item.reporter_id, itemId, `${item.key} is now ${to}`);
+  if (actorId !== item.reporter_id) notify(item.reporter_id, itemId, `${item.key} is now ${to}`, "my_requests");
   runAutomation("status_changed", { itemId });
   return { ok: true };
 }
@@ -203,7 +203,7 @@ export function decide(approvalId: string, user: User, decision: "approved" | "d
       moveItem(item.id, flow.approved, user.id, { system: true });
     }
   });
-  if (note && item.reporter_id !== user.id) notify(item.reporter_id, item.id, `${user.name} ${decision} ${item.key}: ${note}`);
+  if (note && item.reporter_id !== user.id) notify(item.reporter_id, item.id, `${user.name} ${decision} ${item.key}: ${note}`, "my_requests");
   return { ok: true };
 }
 
@@ -235,9 +235,9 @@ export function addComment(itemId: string, author: User, body: string, opts: { i
   });
   // A reply from the requester puts the request back with the team.
   if (!agent && item.category === "service_request" && item.status === "Waiting for customer") moveItem(itemId, "Waiting for support", author.id, { system: true });
-  if (agent && !internal && author.id !== item.reporter_id) notify(item.reporter_id, itemId, `${author.name} replied on ${item.key}`);
+  if (agent && !internal && author.id !== item.reporter_id) notify(item.reporter_id, itemId, `${author.name} replied on ${item.key}`, "my_requests");
   else if (!agent) {
-    if (item.assignee_id) notify(item.assignee_id, itemId, `${author.name} commented on ${item.key}`);
+    if (item.assignee_id) notify(item.assignee_id, itemId, `${author.name} commented on ${item.key}`, "assigned");
     else notifyTeam(item.team_id, itemId, `${author.name} commented on ${item.key}`);
   }
   runAutomation("comment_added", { itemId });
@@ -283,11 +283,11 @@ export function updateItem(itemId: string, actorId: string | null, patch: Partia
     }
   });
   if (changed.includes("assignee_id") && patch.assignee_id && patch.assignee_id !== actorId) {
-    notify(String(patch.assignee_id), itemId, `${item.key} was assigned to you: ${item.summary}`);
+    notify(String(patch.assignee_id), itemId, `${item.key} was assigned to you: ${item.summary}`, "assigned");
   }
   if (changed.includes("is_major") && Number(patch.is_major) === 1) {
     for (const p of all<{ user_id: string }>("select user_id from item_people where item_id = ?", itemId)) {
-      notify(p.user_id, itemId, `${item.key} is now a major incident`);
+      notify(p.user_id, itemId, `${item.key} is now a major incident`, "alerts");
     }
   }
   return { ok: true };
@@ -352,5 +352,42 @@ export function addLink(fromId: string, toKey: string, type: string, actorId: st
   run("insert or ignore into links (id, from_id, to_id, type, created_at) values (?, ?, ?, ?, ?)", uid(), fromId, to.id, type, now());
   logHistory(fromId, actorId, "link", null, `${LINK_TYPES[type].out} ${to.key}`);
   logHistory(to.id, actorId, "link", null, `${LINK_TYPES[type].in} ${from.key}`);
+  return { ok: true };
+}
+
+// A duplicate folds into the item that stays: its conversation, people, services and assets move
+// across, its requester can follow the one that stays, and the duplicate closes with a link.
+export function mergeItem(fromId: string, intoKey: string, actor: User): Result {
+  const from = getItem(fromId);
+  const into = getItemByKey(intoKey.trim());
+  if (!from || !into) return { ok: false, error: `There's no work item ${intoKey}.` };
+  if (from.id === into.id) return { ok: false, error: "An item can't merge into itself." };
+  if (from.category !== into.category) return { ok: false, error: `Only the same kind of work can merge: ${from.key} and ${into.key} differ.` };
+  if (isDone(into.category, into.status)) return { ok: false, error: `${into.key} is already finished; merge into one that's open.` };
+  const closed = WORKFLOWS[from.category].statuses.Closed === "done" ? "Closed" : "Canceled";
+  tx(() => {
+    run("update comments set item_id = ? where item_id = ?", into.id, from.id);
+    for (const t of ["item_services", "item_assets"]) {
+      run(`insert or ignore into ${t} select ?, ${t === "item_services" ? "service_id" : "asset_id"} from ${t} where item_id = ?`, into.id, from.id);
+    }
+    run("insert or ignore into item_people (item_id, user_id, kind, created_at) select ?, user_id, kind, created_at from item_people where item_id = ?", into.id, from.id);
+    if (from.reporter_id !== into.reporter_id) {
+      run("insert or ignore into item_people (item_id, user_id, kind, created_at) values (?, ?, 'stakeholder', ?)", into.id, from.reporter_id, now());
+    }
+    run("insert or ignore into links (id, from_id, to_id, type, created_at) values (?, ?, ?, 'duplicates', ?)", uid(), from.id, into.id, now());
+    run(
+      "insert into comments (id, item_id, author_id, body, internal, occurred_at, created_at) values (?, ?, ?, ?, 1, ?, ?)",
+      uid(),
+      into.id,
+      actor.id,
+      `Merged ${from.key} (“${from.summary}”, raised by ${from.reporter_name}) into this one. Its conversation is above.`,
+      now(),
+      now(),
+    );
+    logHistory(into.id, actor.id, "link", null, `merged ${from.key} into this`);
+    logHistory(from.id, actor.id, "link", null, `merged into ${into.key}`);
+    moveItem(from.id, closed, actor.id, { system: true });
+  });
+  notify(from.reporter_id, into.id, `${from.key} was merged into ${into.key}; updates continue there`, "my_requests");
   return { ok: true };
 }

@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { articleFromItemAction, decideAction, editAction, linkAction, moveAction, peopleAction, relateAction, unlinkAction } from "@/app/actions/items";
+import { articleFromItemAction, decideAction, editAction, linkAction, mergeAction, moveAction, peopleAction, relateAction, resolveAction, unlinkAction } from "@/app/actions/items";
 import { Activity } from "@/components/Activity";
 import { CommentBox } from "@/components/CommentBox";
 import { FieldValues } from "@/components/CustomFields";
@@ -92,6 +92,11 @@ export default async function WorkItem({ params, searchParams }: { params: Promi
           item.planned_start,
         )
       : [];
+  const finish = moves.find((s) => isDone(item.category, s) && s !== "Canceled" && s !== "Failed" && s !== "Closed");
+  const emails = all<{ id: string; to_email: string; subject: string; status: string; created_at: number; sent_at: number | null }>(
+    "select id, to_email, subject, status, created_at, sent_at from outbox where item_id = ? order by created_at desc limit 20",
+    item.id,
+  );
   const isIncident = item.category === "incident";
   const isChange = item.category === "change";
   const detailFields = ["assignee_id", "team_id", "priority", isIncident || item.impact ? "impact,urgency" : "", isIncident ? "is_major" : "", isChange ? "change_type,change_risk,planned_start,planned_end" : ""]
@@ -452,6 +457,62 @@ export default async function WorkItem({ params, searchParams }: { params: Promi
               )}
             </Panel>
           ) : null}
+
+          {finish && item.category !== "change" ? (
+            <Panel title="Finish with a note">
+              <form action={resolveAction} className="space-y-2.5">
+                <input type="hidden" name="itemId" value={item.id} />
+                <input type="hidden" name="to" value={finish} />
+                <TextArea id="finish-resolution" name="resolution" label="What fixed it (kept on the record)" required defaultValue={item.resolution} />
+                <SelectField
+                  id="finish-saved"
+                  name="reply"
+                  label="Tell the requester (optional)"
+                  placeholder="Don't send a reply"
+                  options={canned.map((c) => ({ value: c.body, label: c.title }))}
+                />
+                <SubmitButton size="sm">Save note and mark {finish.toLowerCase()}</SubmitButton>
+              </form>
+            </Panel>
+          ) : null}
+
+          {!isDone(item.category, item.status) ? (
+            <Panel title="Merge a duplicate">
+              <form action={mergeAction} className="space-y-2">
+                <input type="hidden" name="itemId" value={item.id} />
+                <p className="text-sm text-muted">Same problem as another {CATEGORY_LABEL[item.category].toLowerCase()}? Fold this one into it: the conversation moves across and the requester can follow there.</p>
+                <div className="flex gap-2">
+                  <label htmlFor="merge-into" className="sr-only">
+                    Merge into
+                  </label>
+                  <input id="merge-into" name="into" required placeholder="SH-12" className="control" />
+                  <SubmitButton size="md" variant="secondary">
+                    Merge
+                  </SubmitButton>
+                </div>
+              </form>
+            </Panel>
+          ) : null}
+
+          <Panel title="Emails sent">
+            {emails.length ? (
+              <ul className="space-y-1.5 text-sm">
+                {emails.map((e) => (
+                  <li key={e.id} className="flex items-start justify-between gap-2">
+                    <span className="min-w-0">
+                      <span className="block truncate">{e.subject}</span>
+                      <span className="text-xs text-muted">
+                        to {e.to_email} · {ago(e.created_at)}
+                      </span>
+                    </span>
+                    <Lozenge tone={e.status === "sent" ? "done" : e.status === "failed" ? "bad" : "warning"}>{e.status}</Lozenge>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted">No emails about this yet.</p>
+            )}
+          </Panel>
 
           {rating ? (
             <Panel title="Rating">

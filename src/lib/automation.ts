@@ -144,7 +144,7 @@ function perform(a: Action, bot: User, ctx: { itemId?: string; alertId?: string 
       const teamId = ctx.itemId ? getItem(ctx.itemId)?.team_id : ctx.alertId ? getAlert(ctx.alertId)?.team_id : null;
       const people = onCallFor(teamId);
       const key = ctx.itemId ? getItem(ctx.itemId)?.key : null;
-      for (const u of people) notify(u, ctx.itemId ?? null, key ? `On call: ${key} needs you now` : "On call: new alert");
+      for (const u of people) notify(u, ctx.itemId ?? null, key ? `On call: ${key} needs you now` : "On call: new alert", "alerts");
       return `paged ${people.length}`;
     }
     case "open_incident": {

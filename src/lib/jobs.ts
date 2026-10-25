@@ -30,8 +30,8 @@ export function slaWatch(at = now()): string {
       const fresh = run("insert or ignore into sla_notices (item_id, sla_id, kind, created_at) values (?, ?, ?, ?)", item.id, s.slaId, kind, at);
       if (!fresh) continue;
       const msg = kind === "breached" ? `${item.key} missed "${s.name}"` : `${item.key} is close to missing "${s.name}"`;
-      if (item.assignee_id) notify(item.assignee_id, item.id, msg);
-      else notifyTeam(item.team_id, item.id, msg);
+      if (item.assignee_id) notify(item.assignee_id, item.id, msg, "sla");
+      else notifyTeam(item.team_id, item.id, msg, null, "sla");
       sent++;
     }
   }
@@ -49,7 +49,7 @@ export function escalate(at = now()): string {
   );
   for (const a of due) {
     if (!run("update alerts set escalated_at = ? where id = ? and escalated_at is null", at, a.id)) continue;
-    notify(a.escalate_to_id, null, `Escalated: alert #${a.number} "${a.message}" hasn't been acknowledged`);
+    notify(a.escalate_to_id, null, `Escalated: alert #${a.number} "${a.message}" hasn't been acknowledged`, "alerts");
   }
   return `${due.length} escalation(s)`;
 }

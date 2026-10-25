@@ -8,14 +8,15 @@ export const appUrl = () => (process.env.APP_URL || "http://localhost:3000").rep
 
 // Every email goes through the outbox first, so nothing is lost if sending fails.
 // Until email is set up, messages are held and admins can see them in Settings.
-export function queueEmail(to: string, subject: string, body: string): void {
+export function queueEmail(to: string, subject: string, body: string, itemId: string | null = null): void {
   run(
-    "insert into outbox (id, to_email, subject, body, status, created_at) values (?, ?, ?, ?, ?, ?)",
+    "insert into outbox (id, to_email, subject, body, status, item_id, created_at) values (?, ?, ?, ?, ?, ?, ?)",
     uid(),
     to,
     subject.slice(0, 200),
     body,
     mailConfigured() ? "queued" : "held",
+    itemId,
     now(),
   );
 }

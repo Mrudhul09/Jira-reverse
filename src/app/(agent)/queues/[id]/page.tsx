@@ -12,6 +12,7 @@ import { isAdmin } from "@/lib/access";
 import { requireAgent } from "@/lib/auth";
 import { all } from "@/lib/db";
 import { listItems, queuesFor, showCount } from "@/lib/queues";
+import { headlineSla, slaStatesFor } from "@/lib/sla";
 import { ALL_STATUSES } from "@/lib/workflows";
 
 type Sp = Record<string, string | undefined>;
@@ -33,13 +34,25 @@ export default async function QueuePage({ params, searchParams }: { params: Prom
     statuses: sp.status ? [sp.status] : queue.filter.statuses,
     assignee: sp.assignee || queue.filter.assignee,
   };
-  const items = listItems(filter, user.id);
+  const listed = listItems(filter, user.id);
+  // Sorting: priority (the default order from the database), time left on the SLA, oldest first, or latest update.
+  const sort = sp.sort === "sla" || sp.sort === "oldest" || sp.sort === "updated" ? sp.sort : "priority";
+  const left = sort === "sla" ? slaStatesFor(listed) : null;
+  const clock = (id: string) => headlineSla(left?.get(id) ?? [])?.remainingMs ?? Number.POSITIVE_INFINITY;
+  const items =
+    sort === "sla"
+      ? [...listed].sort((a, b) => clock(a.id) - clock(b.id))
+      : sort === "oldest"
+        ? [...listed].sort((a, b) => a.created_at - b.created_at)
+        : sort === "updated"
+          ? [...listed].sort((a, b) => b.updated_at - a.updated_at)
+          : listed;
   const agents = all<{ id: string; name: string }>("select id, name from users where role != 'employee' and active = 1 and system = 0 order by name");
   const types = all<{ id: string; name: string }>("select id, name from request_types order by position");
   const path = `/queues/${queue.id}`;
   const keep = (extra: Sp) => {
     const p = new URLSearchParams();
-    for (const [k, v] of Object.entries({ q: sp.q, type: sp.type, status: sp.status, assignee: sp.assignee, view: sp.view, ...extra })) if (v) p.set(k, v);
+    for (const [k, v] of Object.entries({ q: sp.q, type: sp.type, status: sp.status, assignee: sp.assignee, sort: sp.sort, view: sp.view, ...extra })) if (v) p.set(k, v);
     return `${path}${p.size ? `?${p}` : ""}`;
   };
   const filtered = !!(sp.q || sp.type || sp.status || sp.assignee);
@@ -134,7 +147,16 @@ export default async function QueuePage({ params, searchParams }: { params: Prom
               </option>
             ))}
           </select>
-          <Button type="submit">Filter</Button>
+          <label className="sr-only" htmlFor="fsort">
+            Sort by
+          </label>
+          <select id="fsort" name="sort" defaultValue={sort} className="control w-44">
+            <option value="priority">Priority first</option>
+            <option value="sla">Least SLA time left</option>
+            <option value="oldest">Oldest first</option>
+            <option value="updated">Recently updated</option>
+          </select>
+          <Button type="submit">Apply</Button>
           {filtered ? (
             <LinkButton href={keep({ q: "", type: "", status: "", assignee: "" })} variant="subtle">
               Clear

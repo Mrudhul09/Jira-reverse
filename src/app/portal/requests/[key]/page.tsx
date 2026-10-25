@@ -12,9 +12,11 @@ import { canViewItem, isAgent } from "@/lib/access";
 import { requireUser } from "@/lib/auth";
 import { get, parseJson } from "@/lib/db";
 import { ago, dateTime } from "@/lib/format";
-import { approvals, comments, getItemByKey } from "@/lib/items";
+import { approvals, comments, getItemByKey, links } from "@/lib/items";
+import { slaStatesFor } from "@/lib/sla";
+import { duration } from "@/components/ui/sla-badge";
 import type { FieldDef } from "@/lib/types";
-import { isDone, nextStatuses } from "@/lib/workflows";
+import { CATEGORY_LABEL, isDone, nextStatuses } from "@/lib/workflows";
 
 export async function generateMetadata({ params }: { params: Promise<{ key: string }> }) {
   return { title: `Request ${(await params).key.toUpperCase()}` };
@@ -33,6 +35,17 @@ export default async function RequestView({ params, searchParams }: { params: Pr
   const waitingOnMe = decisions.find((a) => a.approver_id === user.id && a.decision === "pending");
   const fields = item.request_type_id ? parseJson<FieldDef[]>(get<{ f: string }>("select fields_json as f from request_types where id = ?", item.request_type_id)?.f, []) : [];
   const rating = get<{ score: number; comment: string }>("select score, comment from csat where item_id = ?", item.id);
+  // What we promise, in plain words: the goal, and whether we're on track.
+  const promises = slaStatesFor([item]).get(item.id) ?? [];
+  const promise = (s: (typeof promises)[number]) => {
+    const what = s.metric === "first_response" ? "A first reply" : "A fix";
+    if (s.state === "met") return `${what}: done within our ${duration(s.goalMs)} goal.`;
+    if (s.state === "breached") return `${what}: we missed our ${duration(s.goalMs)} goal, sorry. It's still with us.`;
+    if (s.state === "paused") return `${what}: on hold while we wait for you; about ${duration(s.remainingMs)} of our ${duration(s.goalMs)} goal left.`;
+    return `${what}: within ${duration(s.goalMs)}${s.allDay ? "" : " of working hours"}; about ${duration(s.remainingMs)} to go.`;
+  };
+  // Linked work the requester may know about: an incident's summary, otherwise only what kind of work and where it is.
+  const related = links(item.id).filter((l) => l.direction === "in" || l.type !== "duplicates");
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 md:px-6">
       <Banners sp={sp} />
@@ -86,6 +99,28 @@ export default async function RequestView({ params, searchParams }: { params: Pr
               </p>
               <p>Looked after by {item.assignee_name ?? item.team_name ?? "the IT team"}</p>
               <p>Updated {dateTime(item.updated_at)}</p>
+              {promises.length && !done ? (
+                <div>
+                  <strong>What to expect</strong>
+                  <ul className="mt-1 space-y-1">
+                    {promises.map((s) => (
+                      <li key={s.slaId}>{promise(s)}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {related.length ? (
+                <div>
+                  <strong>Related work</strong>
+                  <ul className="mt-1 space-y-1">
+                    {related.map((l) => (
+                      <li key={`${l.id}${l.direction}`}>
+                        {l.other_category === "incident" ? `${l.other_key} ${l.other_summary}` : `A ${CATEGORY_LABEL[l.other_category].toLowerCase()} the IT team is working on`}: {l.other_status.toLowerCase()}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
               {item.resolution ? (
                 <div>
                   <strong>What we did</strong>

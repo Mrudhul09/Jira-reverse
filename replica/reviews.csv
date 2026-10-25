@@ -1,0 +1,242 @@
+"source","url","date","rating","text","votes"
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=1/id=1006972087/sortBy=mostRecent/json","2025-10-15","5","Great Daily Tool. In some ways it’s almost better than the desktop. I use the app constantly to stay on top of JSM tickets and stay available for my customers.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=2/id=1006972087/sortBy=mostRecent/json","2025-09-12","1","critical alerts not working. forced to use this app over opsgenie but the critical alert functionality does not actually alert like opsgenie, i keep missing pages in the middle of night and even day",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=2/id=1006972087/sortBy=mostRecent/json","2025-05-01","1","Can’t even see your users in the app. The app is lacking almost everything that was present in OpsGenie and is so basic it’s not worth using. What a downgrade.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=2/id=1006972087/sortBy=mostRecent/json","2025-03-25","1","No longer getting push notifications. I double checked all settings in the app and even ran the test, notification appears on screen during test but not when new tickets come in. I also checked my phone settings, nothing changed. Did reboot the phone just in case it was an issue. Not getting pop up alert from the app nor am I getting a sound notification.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=2/id=1006972087/sortBy=mostRecent/json","2024-09-20","1","App new release. App constantly needs a new release and every time it does you have to hope that it works. Currently I select “update app” and it takes me to the play store. Which tells me the app is up to date and only option is to open the app. Repeat steps… Even when I uninstall and reinstall the same symptoms exists. This is now the 3rd time I have dealt with this nonsense and I rely very heavily on this major app to work for my JSM clients who are 24/7 support. App is great when it works but with constant new releases you're always playing with fire. I get the idea of agile and sprint planning but QC is virtually nowhere in the equation with normal smoke tests like the app launching properly after new release is installed.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=3/id=1006972087/sortBy=mostRecent/json","2024-01-18","5","Bug with iPad version. The send paper airplane icon for a comment on a task in service management is not visible to allow you to send your comment on a service request ticket.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=3/id=1006972087/sortBy=mostRecent/json","2023-12-02","5","Great way to build your brand. And learn how to develop a better understanding of the customer and partner relationships between a business product",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=3/id=1006972087/sortBy=mostRecent/json","2023-08-24","3","Issue with Reply to Customer. Within the app when replying to customer and trying to @ someone, not everyone appears even when you type out their name. 
+
+When you do the same on the web, there are no issues at all and the correct people are available to @.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=3/id=1006972087/sortBy=mostRecent/json","2023-08-22","3","Hate Jira. It’s not a user friendly trouble ticketing system.  There isn’t a running link to historical events and no cross referencing information that links similar incidents.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=4/id=1006972087/sortBy=mostRecent/json","2023-05-22","4","The app is good to a point…. Having access to the queues and tickets is great for being mobile. However I need the ability to sort the queues. This has been lacking since we first starting using the mobile app. An ability to sort newest to oldest would make this app even better.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=6/id=1006972087/sortBy=mostRecent/json","2021-02-26","2","Comment box disappearing. This app is great, but I often leave comments for my customers. If I press enter or leave a lengthy comment my whole dialog box disappears so I can’t see what I’m typing. It’s pretty inconvenient for me, so I refrain from responding to my customers through here. Everything else works great as far as viewing tickets for our Service Desk.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=6/id=1006972087/sortBy=mostRecent/json","2021-02-20","3","Halfway to awesome. Please add sort by status menu to Assigned to me queue view. Dozens of things assigned to me, would like to focus on those that are up next/to do as opposed to in a waiting state.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=7/id=1006972087/sortBy=mostRecent/json","2020-10-23","5","Great Software and IOS App. Atlasssian is the best solution for software development at least because it comes as a whole thing. Jira gives a wide range of tools to successfully manage developing process, simple integration to Bitbucket and even customer support system gives me a hope I will finally finish developing my soft 🙃.
+IOS app works perfectly, gives notifications and keep working process on the go.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=7/id=1006972087/sortBy=mostRecent/json","2020-04-21","3","Nice, but missing alert for created tickets. I don’t understand how missing an alert for new tickets is even missed?!?",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=9/id=1006972087/sortBy=mostRecent/json","2019-06-04","3","A bunch of stupid notifications. There needs to be a way of filtering notifications based on what's important. So much of what I get on my phone is useless and silly, and it makes me not pay attention to the alerts that are important",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=10/id=1006972087/sortBy=mostRecent/json","2019-04-04","1","Login never authenticates. Have used Jira for years. Still can’t use my credentials to log in. Tried to connect with customer service but hear nothing back. Frustrating experience to say the least.",""
+"app-store","https://itunes.apple.com/us/rss/customerreviews/page=10/id=1006972087/sortBy=mostRecent/json","2019-01-12","1","Support is poor. Customer service is lacking",""
+"hacker-news","https://news.ycombinator.com/item?id=49666722","2026-09-11","","I get the temptation to self-host your support platform, as the existing tooling out there can be quite expensive when you want to upgrade from just using an email inbox.
+
+If any founders find themselves reading this, and don't think it's the best idea to self-host your own support infra, I've just spent the last 6+ months building stayupfront.com which has, I think, quite reasonable pricing, and a few more features than this... largely around the customer's portal experience (changelog, roadmap, etc.) and includes monitoring & incident management which I think should all be ran from the same surface.
+
+I've only just soft-launched, so still have founding pricing on there. Would certainly love to speak to others in this space too, as I was surprised how neglected an area it seemed to be when I was trying to find a replacement for jira service desk for a company I was working with at the beginning of this year.",""
+"hacker-news","https://news.ycombinator.com/item?id=36827304","2023-07-22","","You’re not a dinosaur for hating the continued consumerization of products and services targeted toward use cases that are expert in nature.
+
+Sure, have a simpler GUI for Jira Service Desk users in a non-technical customer service role. Give me a different GUI that’s not driven by designers looking to reinvent. I don’t need that, I don’t want that, and it just wastes my time.",""
+"hacker-news","https://news.ycombinator.com/item?id=33604763","2022-11-15","","Not a silly ask. I’ve seen B2B Success Teams be very successful setting up a private channel for clients and using Atlassian Assist.
+
+This feature isn’t marketed by Atlassian. It Jira Service Desk provides the “backend” to the support experience, providing private comments, threads, the ability to merge multiple conversations that pop up in Slack, and link up support requests to active development in Jira.
+
+The only downside is I believe JSM is limited to 5000 external users. Not a huge issue for B2B Success. Considering a external user is only created when a support request via the :ticket: emoji is used.",""
+"hacker-news","https://news.ycombinator.com/item?id=32179041","2022-07-21","","Zendesk is a million times better than Freshdesk, ServiceNow, Jira service desk, in the context of basic ticket management workflow.",""
+"hacker-news","https://news.ycombinator.com/item?id=31933750","2022-06-30","","> Funny thing is jira is such a mess Atlassian introduced jira service desk more focused on tickets while the former can also do that.
+
+Not quite. Service Desk (aka Service Management today) has a number of capabilities that differ quite significantly from Jira Software. The most obvious is the end-user facing help portal. But how users are managed is quite different, it has SLAs, different reporting, a knowledge base, etc. Just like Jira Software is flexible but tailored to software teams with boards, backlogs and sprints, Jira Service Management is tailored to IT teams and requirements specific to that market.",""
+"hacker-news","https://news.ycombinator.com/item?id=31815073","2022-06-20","","You get a few projects in JIRA…and you’re stuck. Then you add JIRA Service Desk or Service Management or whatever the hell it’s called these days…and you’re stuck. Then you add some Confluence docs linked to your tickets…
+
+Unless one is really willing to throw institutional knowledge out, changing tracking systems is extremely costly.",""
+"hacker-news","https://news.ycombinator.com/item?id=29271836","2021-11-18","","Misleading error messages are the worst.
+
+As a software developer, it's bad enough that I have to constantly challenge my assumptions to try to debug something. It's even worse when I have to think ""What part of the system is lying to me?""
+
+Recently I upgraded Jira Service Desk (new name: Service Management) to a new version. After the upgrade I got an error in the administrative section of the app. It popped up an error message saying ""Something is wrong. Contact administrator."" Ugh... but I'm the administrator! And I don't know what's wrong.
+
+Maybe it's not a misleading error message, but it's certainly an unhelpful one.
+
+Since software can be a lying devil, I am happy that I can make use of so much open source software. I've often delved into the source code to understand what's going on. Once I do that I can either fix the issue, work around it, or even submit a PR upstream.
+
+It's much harder to figure out what's going wrong with closed source software. And even if I do figure it out, I'm powerless to change the situation.
+
+Now if you'll excuse me, I'll be contacting Atlassian support to help me fix the ""Something is wrong"" message.",""
+"hacker-news","https://news.ycombinator.com/item?id=23714239","2020-07-02","","We use Jira cloud, so if it is misconfigured, blame them. My internet isn’t great, but I will anecdotally note that Atlassian sites are the only ones that ruin a videocon connection. As for your general criticism comment, glass houses.
+
+Last, hot circle of garbage: https://m.youtube.com/watch?v=S70lQwc0FDs
+
+To get specific:
+
+- they’ve had a ticket to hide completed epics from the roadmap open for over a year.
+
+- their user management is a unmitigated disaster. God help you if you use bitbucket or Trello (although Trello users are getting integrated in after 4 years!).
+
+- it took me literally 2 months of help desk tickets to figure out how to get an invoice. The former billing poc was fired, and even though I was the site admin, I had to recreate his account in our SSO, log in as him, and then assign the role to me.
+
+- have you tried to set up even a slightly customized Jira Service Desk?
+
+- want to expire “done” issues faster than 14 days? Pound sand.
+
+- I could keep going, but what’s the point? Atlassian is a bunch of decent products drowning in scope creep, terrible cross-product integration, and a painfully slow development cycle that is focused way more on cosmetic features that fixes their trainwreck of a dumpster fire.
+
+Now that’s a mixed metaphor for you.",""
+"hacker-news","https://news.ycombinator.com/item?id=31018672","2022-04-13","","I was part of the decision to purchase Atlassian tools at my company. We had been using a variety of self-hosted and SaaS tools which had varying abilities to integrate with each other. We’ve had very positive feedback from users since switching to them. We were also able to move some of our help desks to JIRA Service Management, and away from another self-hosted product which is still used by a good portion of our business. The self-hosted product is honestly a nightmare to maintain and keep secure. According to the vendor, the “fix” is to have 1-2 people dedicated to that product, which simply isn’t something that my team has the bandwidth or will to do.
+
+JIRA does try to be all things to all people…and mostly succeeds. For instance, we use the same workflow and mostly the same nomenclature across our development and helpdesk teams. Some of our software projects use Kanban-style workflows, while others use sprints, but we can keep track of a project across multiple teams using the same tools. I’m sure other products also offer this, but we liked the integration and overall capability for the price.
+
+There are definitely issues: some feature requests and bugs have languished in their backlog for years. But you can get started very quickly and we’ve had great feedback from users.",""
+"hacker-news","https://news.ycombinator.com/item?id=37902474","2023-10-16","","We're continuing to build more and more service desk projects in Jira Service Management.  That's becoming a killer feature for our business teams like HR, Finance, Marketing, and others.  For us Jira Software is the 'other child' these days with JSM really taking front and center.",""
+"hacker-news","https://news.ycombinator.com/item?id=37898808","2023-10-16","","It's really hard to find any product or suite of products that replaces Atlassians offerings. Sure you can easily find a issue tracker product, but can it be a service desk at the same time? Bitbucket, Confluence and Jira also integrates really really well. You can have entire workflows that just makes sense, link to documentation, pull-requests/commits and tickets. I've frequently used this setup in a ITIL environment, entire workflows where you have tickets for test, staging and production deployments, the production deployment is a ticket that have the relevant pull-requests linked and the documentation is automatically updated because everything works together.
+
+There's a number of companies offering ""Jira replacements"" at it's either just service desk features or a ticketing system, almost as if the authors never really used a full-blown Jira (/Atlassian) setup.
+
+People complain a lot about the UI and speed of Atlassians products, but on-prem isn't really slow, even with a ton of plugins, but you do need trained staff to manage it. The UI is because of Jira doesn't really impose much in the way of restrictions on how to use it. You can basically mix and match anyway you like, service desk tickets mixed in with SCRUM workflows... doesn't mean you should, but you can.",""
+"hacker-news","https://news.ycombinator.com/item?id=42758510","2025-01-19","","A FOSS plugin to mimic Service Desk on top of Github issues would be great.
+
+You'd miss the infinite complexity of Jira workflow configuration, but that might be a good thing.",""
+"hacker-news","https://news.ycombinator.com/item?id=33139799","2022-10-09","","There are none, because Jira does a million different things, not necessarily all that well though.
+
+Jira can be a task manager, a bug tracker, a service desk ticketing system, a project planner (regardless of methodology applied), a Kanban board, a knowledge database and so much more if you know how to configure it. That's also why sucks in many cases. You end up in these weird situations where you have a service desk ticket marked as an Epic, or on person on the team uses a kanban board, while the rest are just going by a different priority. Sometimes priorities migrate from you service desk to a SCRUM project and things make no sense.
+
+You can work pretty well with Jira, if you can stick to one set of feature and keep the entire organisation locked to one type of projects. There are some things it's not good for, I don't see it as being a good project planing tool, regardless of how you try to use it. As a service desk tool it's pretty good.
+
+I will say Jira is much better something like Phabricator or Bugzilla. Neither of those are alternatives, Phabricator is the closet, but it still doesn't do all the things Jira does.",""
+"hacker-news","https://news.ycombinator.com/item?id=30234413","2022-02-06","","Lack of service desk in other applications has always been what keeps our org on Jira (on premises). Anyone have any suggestions on deeply integrating service desk tickets with engineering tasks?",""
+"hacker-news","https://news.ycombinator.com/item?id=24970996","2020-11-02","","CRM, service desk, CMDB, trouble ticket, tickets in general, we just don’t use it to manage project. We have tried things like the Kanban board, but it’s not all that good. Our PM find it easier to keep the tasks in Jira, but do the planning i MS Project",""
+"hacker-news","https://news.ycombinator.com/item?id=43295349","2025-03-07","","If anyone started using OpsGenie post acquisition they should have KNOWN atlassian would change something, assuming it would remain status quo would have been naive.
+
+For us it was a seamless migration for us to Jira Service Management from OpsGenie. There were many emails, and many in app banner notifications for MONTHS. All our rules transferred over. I only had to setup our notification integrations so all links into email/slack goto Jira Service Mgmt instead of OpsGeneie. Our OpsGeneie instance is currently read only.",""
+"hacker-news","https://news.ycombinator.com/item?id=43286872","2025-03-07","","""Starting today, there are two options for Opsgenie customers: move to Jira Service Management for robust end-to-end incident management, or move to Compass for alerting and on-call management alongside an intuitive software component catalog.""
+
+Or do something sane like move off Atlassian products completely.",""
+"hacker-news","https://news.ycombinator.com/item?id=43283670","2025-03-06","","As a current Opsgenie user, I disagree. They're splitting their incident management and alerting/on-call into two services - Jira Service Management and Compass, respectively. Both are terrible, and not at all one-to-one replacements.",""
+"hacker-news","https://news.ycombinator.com/item?id=43283386","2025-03-06","","We aren’t subscribed to OpsGenie but Jira sends OpsGenie notifications all the time and it’s impossible to unsubscribe, because you need to cancel OpsGenie which we don’t have.
+
+Anyway the product map of Atlassian is unreadable now (Jira Work ≠ Jira Portfolio ≠ Jira Software ≠ Jira Service Management, all in Jira), and they don’t make clear what you’re subscribed to in the administration: Products, addons, same products but other sites, etc. This mess is downright visible in the announcement:
+
+> Starting today, there are two options for Opsgenie customers: move to Jira Service Management for robust end-to-end incident management, or move to Compass for alerting and on-call management alongside an intuitive software component catalog.
+
+I think they botched the project where they unified the login, and failed to make a centralized dashboard. In any case, I always wonder whether that’s intentional or a dedicated effort to make people spend more.",""
+"hacker-news","https://news.ycombinator.com/item?id=26500824","2021-03-18","","I am using Atlassian's free plans for Jira, Confluence and Service Management.
+They are great!",""
+"hacker-news","https://news.ycombinator.com/item?id=32702816","2022-09-03","","I am already using Github and Jira integrated - problem is that a. Jira doesn't  provide a change request workflow b. They don't integrate with ServiceNow (which is a major IT service management workflow used for, among many things, change management).",""
+"hacker-news","https://news.ycombinator.com/item?id=31221256","2022-05-01","","While the post-mortem is thorough, it misses key details on what companies experienced who were unlucky enough to be caught out by this outage. For example, it fails to mention how impacted customers lost access to certain Atlassian services for up to ~2 weeks: JIRA, Confluence, OpsGenie. But not others like Trello or BitBucket.
+
+Of these, losing access to OpsGenie for this long was a massive problem, dwarfing most other systems. OpsGenie is like PagerDuty in the Atlassian world.
+
+I spoke to several engineers at impacted companies who could not believe their incident management system was “deleted” and had no ETA on when it would be back, or Atlassian could not prioritise restoring this critical system ASAP. JIRA and Confluence being down was trouble enough, but those systems being down for some time was things most teams worked around. However, suddenly flying blind, with no pager alerting for their own systems? That is not acceptable for any decent company.
+
+Most I talked with moved rapidly to an alternative service, building up oncall rosters from memory and emails - as Confluence which stored these details was also down. Imagine being a billion dollar company suddenly without pager system: and no ETA on when that system would be back, your vendor not responding to your queries.
+
+I talked to engineers at such a company and it was a long night to move rapidly over to PagerDuty. It would be another 7 days they could get through to a human at Atlassian. By that time, they were a lost customer for this product. Ironically, this company moved to OpsGenie a few years before from PagerDuty because OpsGenie was cheaper and they were on so many Atlassian services already.
+
+The post-mortem has no actions on prioritising services like OpsGenie in reliability or restoration, which is a miss. I can’t tell if Atlassian staff are unaware of the critical nature of this system or if they treat all their products - including paging systems - as equals in terms of SLAs on principle.
+
+Worth keeping in mind when choosing paging vendors - some might recognise these systems are more critical ones than others.
+
+I wrote about this outage from the viewpoint of the customers as it entered its 10th day and it was discussed in HN, with comments from people impacted by the outage. [1]
+
+[1] https://news.ycombinator.com/item?id=31015813",""
+"hacker-news","https://news.ycombinator.com/item?id=48269346","2026-05-25","","The funny thing is that Atlassian themselves uses “custom fields” so it’s not even clear which are actually org-specific. The new JSM uses a lot of them, for example. It smells like things got so convoluted internally that even first party features are just velcro’d on top.",""
+"hacker-news","https://news.ycombinator.com/item?id=41692498","2024-09-30","","Yeah… that’s Atlassian for you. Why sell just Jira when you can sell jira, confluence, bitbucket, opsgenie, and atlas as part of the Atlassian cloud platform.
+
+This is the company that (already having owned jira) bought trello and did nothing with it for 5 years.",""
+"hacker-news","https://news.ycombinator.com/item?id=43287740","2025-03-07","","Except that nothing is going away. We did the same, migrate from PD to OpsGenie. As soon as they offered to use JSM instead, we tried it and it’s great. Only one mobile client for everything, all old OpsGenie integrations just keep running, you still have heartbeats. JSM is the same product, just integrated into Jira. If you have OpsGenie running, migrating to JSM is just the push of a button.",""
+"hacker-news","https://news.ycombinator.com/item?id=43284644","2025-03-06","","The most bizarre OpsGenie story was how in 2022, this tool was down for 2 weeks for hundreds of unlucky companies that were Atlassian customers. This was at a time when JIRA had an outage impacting a small percentage of their customer base - but still in the hundreds of organizations (with around tens of thousands of users.)
+
+While most companies can operate for some time without JIRA: losing your paging service means you're flying in the dark. And yet, Atlassian did not prioritize restoring OpsGenie.
+
+I covered the details at the time [1]. To this date, this incident is a real head-scratcher and makes me wonder if Atlassian has internalized how much more critical an incident alerting software is, compared to a ticketing software (JIRA) or wiki (Confluent).
+
+[1] https://newsletter.pragmaticengineer.com/i/52148641/what-atl...",""
+"hacker-news","https://news.ycombinator.com/item?id=39323602","2024-02-10","","I mostly agreed with OP's article, but you basically nailed all of the points of disagreement I did have.
+
+Jira: Its overhyped and overpriced. Most HATE jira. I guess I don't care enough. I've never met a ticket system that I loved. Jira is fine. Its overly complex sure. But once you set it up, you don't need to change it very often. I don't love it, I don't hate it. No one ever got fired for choosing Jira, so it gets chosen. Welcome to the tech industry.
+
+Terraform Cloud: The gains for Terraform Cloud are minimal. We just use Gitlab for running Terraform pipelines and have a super nice custom solution that we enjoy. It wasn't that hard to do either. We maintain state files remotely in S3 with versioning for the rare cases when we need to restore a foobar'd statefile. Honestly I like having Terraform pipelines in the same place as the code and pipelines for other things.
+
+GitHub Actions: Yeah switch to GitLab. I used to like Github Actions until I moved to a company with Gitlab and it is best in class, full stop. I could rave about Gitlab for hours. I will evangelize for Gitlab anywhere I go that is using anything else.
+
+DataDog: As mentioned, DataDog is the best monitoring and observability solution out there. The only reason NOT to use it is the cost. It is absurdly expensive. Yes, truly expensive. I really hate how expensive it is. But luckily I work somewhere that lets us have it and its amazing.
+
+Pagerduty: Agree, switch to OpsGenie. Opsgenie is considerably cheaper and does all the pager stuff of Pager duty. All the stuff that PagerDuty tries to tack on top to justify its cost is stuff you don't need. OpsGenie does all the stuff you need. Its fine. Similar to Jira, its not something anyone wants anyway. No ones going to love it, no one loves being on call. So just save money with OpsGenie. If you're going to fight for the ""brand name"" of something, fight for DataDog instead, not a cooler pager system.",""
+"hacker-news","https://news.ycombinator.com/item?id=31933139","2022-06-30","","This thing reads like an uninformed hit piece.
+
+Let me go ahead and flex my MBA knowledge for all the engineers in the building who claim that MBAs don't know anything about business...
+
+First, I suggest you read Atlassian's balance sheet and income statement. They're a public company, so it's all publicly available information. [1]
+
+Look how fast those revenues are growing.
+
+Look at how Cost of revenues is declining against the revenue. In 2019, it was 33%, 2020 it was 28%, 2021 it was 25%. That means that as Atlassian's subscriber count increases, its cost per subscriber is decreasing, a direct contradiction to the claims made in this article.
+
+In the statements of cash flows, you'll see that Net cash provided by operating activities increases every year. Financing activities explain losses, not any sort of problem with the fundamentals of the business.
+
+And, when you're losing money, you don't pay taxes. Atlassian is doing a standard business/accounting play here: re-invest in the business and use financial activities in order to pay nothing to the Australian equivalent of Uncle Sam. Income tax expense is a negative number on the balance sheet each year.
+
+The worst claim in the article is that Atlassian represents a ""legacy"" product. No, not at all, especially if you've been on their cloud products anytime recently. The cloud products get rapid iterations and improvements, including performance.
+
+Atlassian's pricing is extremely competitive, acting as a ""bundle"" that competitors can't match. Jira in particular has basically no realistic competitor, and OpsGenie does the same thing as PagerDuty at a fraction of the cost.
+
+[1] https://s28.q4cdn.com/541786762/files/doc_financials/2021/ar...
+
+(Scroll to page F-5 about 105 pages in)",""
+"hacker-news","https://news.ycombinator.com/item?id=31930326","2022-06-30","",">  users can switch to a competitor product like Asana, Basecamp or Monday.com with minimal cost
+
+That's just plain nonsense.
+
+I dislike using Jira as much as anyone, mainly because it's so excruciatingly slow.
+
+But there is no competing product (suite) that offers comparable functionality and provides the same long-term flexibilty. Many companies have built entire workflows (not just development related) around Jira, and have huge knowledge bases in Confluence.
+Switching would come with a lot of effort.
+
+I will say that most of the Atlassian products are ... not great.
+
+Bitbucket has completely stagnated and is way worse than Github and Gitlab.
+They actually had an opportunity there. Once upon a time Bitbucket was the only site to offer free private repos, and it attracted a decent number of users to also publish open source there. A good amount of companies adopted it.
+But they let it linger and didn't keep up with Github or even Gitlab. Just like Jira it's also slow and awkward to use. (never do large PRs ...).
+
+I see a lot of companies switching away from Bitbucket now because developers are not happy with it.
+
+Bamboo ... meh
+
+Opsgenie ... meh
+
+Confluence is actually fine. If only it had better search and wasn't so slow...
+
+And Jira is so complex, improving it is probably extremely cumbersome  because so many features have to be considered and everything has to keep working.
+
+It might be advisable for Atlassian to start fresh with a new ticketing system.
+
+Anyway, they have 8000 employees... they can always drastically downsize and refocus, the company will be around for a while.",""
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4328","2016-09-27","","Feature request: Add fields (view only) in Customer Portal","1726"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4698","2017-01-25","","Feature request: Provide an outgoing email logs ","1515"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4642","2017-01-11","","Feature request: Ability To Add Custom Field Values to Customer Notifications","1289"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4685","2017-01-23","","Feature request: Merge issue feature needed","1239"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-12765","2023-06-19","","Feature request: Canned Responses - Resolution/Transition Screen","1160"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-1422","2015-01-28","","Feature request: Sub-tasks as an applicable issue type for Request Types","1143"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-1914","2015-05-22","","Feature request: As a user, I would like to add Customer Request Type,  Affected Services  field into Dashboard Gadget","1050"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10908","2022-02-11","","Feature request: Hide the ""Share With"" Field at Customer Portal Fields","1005"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-93","2013-10-22","","Feature request: Allow Editing of Fields through the Service Desk Request","1002"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-1511","2015-02-13","","Feature request: Allow adding Request Participant field into Request Form in Customer Portal","958"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-328","2014-02-13","","Feature request: Allow Assignee to be Shown on Customer Portal","888"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4636","2017-01-10","","Feature request: View linked issue in the Customer Portal","857"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-5746","2017-11-19","","Feature request: Change the customer e-mail address ","800"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-2044","2015-06-30","","Feature request: Include request history in customer notifications","739"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-6989","2018-10-16","","Feature request: Ability to display screens on Approve/Deny Service Desk Transitions","739"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-3917","2016-06-14","","Feature request: Create a Linked Issue Screen","665"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-325","2014-02-13","","Feature request: Allow SLA to be viewed from Customer Portal","655"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-86","2013-10-21","","Feature request: Several picker field types can't be added to a request type","607"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-7057","2018-10-18","","Feature request: Allow Service Desk administrator to disable the ""Share"" feature","588"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-9967","2021-05-10","","Feature request: Ability to export Assets data from Object Schema","585"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10000","2021-05-18","","Feature request: Ability to move objects to another object type within object schema in Assets","573"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-5981","2018-02-26","","Feature request: Disable portal automatic responses based on customer notifications settings","568"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-106","2013-10-25","","Feature request: Assign ticket to group","549"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-8484","2019-09-27","","Feature request: Ability to change comment order in the new portal design","549"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4922","2017-03-09","","Feature request: Allow JSD to make comment required on transition in Customer Portal","528"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10317","2021-08-30","","Feature request: Ability to hide Assets object custom field in customer portal","502"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-7998","2019-03-11","","Feature request: Ability to remove/hide the ""Recently used forms"" from portal","491"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-1743","2015-04-06","","Feature request: Ability to vote on an issue on Customer Portal","491"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-6988","2018-10-16","","Feature request: Approval steps should not bypass workflow validator","485"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10502","2021-10-20","","Feature request: Azure Integration for JSM Assets","475"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10863","2022-02-07","","Feature request: Assets integration with Microsoft Intune","470"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4276","2016-09-09","","Feature request: Request type schemes","468"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10507","2021-10-21","","Feature request: JQL search/basic search on ProForma/Forms fields","447"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-826","2014-09-18","","Feature request: Ability to export all tickets: As a Service Desk Customer, I want to export the Service Desk Requests fields (csv, excel) to be able to follow my interactions with Service Desk Team agents in an offline mode","444"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-10699","2021-12-21","","Feature request: Forms: Display/Hide forms by default on an issue","440"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-1832","2015-05-01","","Feature request: Dynamic SLA Goal in JSM","439"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-9705","2021-02-04","","Feature request: Add the ability to display custom fields and other system field to the request page","435"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-119","2013-11-04","","Feature request: Allow to rename an existing SLA","435"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4867","2017-02-28","","Feature request: Allow user groups to be added into Service Management organization ","433"
+"atlassian-requests","https://jira.atlassian.com/browse/JSDCLOUD-4770","2017-02-14","","Feature request: Add ""Organization"" field on ""Statistic Type"" option for Issue Statistic gadget and other gadgets","423"

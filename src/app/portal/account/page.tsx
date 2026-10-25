@@ -3,20 +3,31 @@ import { Banners, PageHead, Panel } from "@/components/ui";
 import { Checkbox, TextField } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit";
 import { MIN_PASSWORD, requireUser } from "@/lib/auth";
-import { get } from "@/lib/db";
+import { isAgent } from "@/lib/access";
+import { get, parseJson } from "@/lib/db";
+import { EMAIL_KINDS } from "@/lib/notify";
 
 export const metadata = { title: "Your account" };
 
 export default async function Account({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const user = await requireUser();
-  const prefs = get<{ email_notifications: number }>("select email_notifications from users where id = ?", user.id)!;
+  const prefs = get<{ email_notifications: number; email_kinds: string }>("select email_notifications, email_kinds from users where id = ?", user.id)!;
+  const kinds = parseJson<string[]>(prefs.email_kinds, []);
   return (
     <main className="mx-auto max-w-3xl space-y-5 px-4 py-6 md:px-6">
       <Banners sp={await searchParams} />
       <PageHead title="Your account" intro={`${user.name} · ${user.email}`} />
       <Panel title="Email updates">
-        <form action={emailPrefsAction} className="flex flex-wrap items-center justify-between gap-3">
-          <Checkbox name="email" defaultChecked={!!prefs.email_notifications} label="Email me when something needs me or changes on my requests" />
+        <form action={emailPrefsAction} className="space-y-3">
+          <Checkbox name="email" defaultChecked={!!prefs.email_notifications} label="Send me emails" />
+          <fieldset className="space-y-1.5 pl-6">
+            <legend className="mb-1 text-sm text-muted">Which ones (everything still shows in the app)</legend>
+            {Object.entries(EMAIL_KINDS)
+              .filter(([k]) => isAgent(user) || k === "my_requests" || k === "approvals")
+              .map(([k, label]) => (
+                <Checkbox key={k} name="kinds" value={k} defaultChecked={kinds.includes(k)} label={label} className="flex" />
+              ))}
+          </fieldset>
           <SubmitButton size="sm" variant="secondary">
             Save
           </SubmitButton>
