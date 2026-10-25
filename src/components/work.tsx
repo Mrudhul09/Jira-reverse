@@ -60,7 +60,7 @@ export function ItemTable({
                   <input type="checkbox" name="ids" value={i.id} form={formId} aria-label={`Select ${i.key}`} className="size-4 accent-[var(--accent)]" />
                 </Td>
               ) : null}
-              <Td className="font-mono text-sm">
+              <Td className="whitespace-nowrap font-mono text-sm">
                 <Link href={`/items/${i.key}`}>{i.key}</Link>
               </Td>
               {showType ? <Td className="text-sm">{i.request_type_name ?? CATEGORY_LABEL[i.category]}</Td> : null}

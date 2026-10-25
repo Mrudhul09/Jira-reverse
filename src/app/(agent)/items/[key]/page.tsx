@@ -131,7 +131,7 @@ export default async function WorkItem({ params, searchParams }: { params: Promi
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-6">
           <Section itemId={item.id} field="description" label="Description" value={item.description} page={page} empty="No description." />
           {fields.length ? (
@@ -171,7 +171,7 @@ export default async function WorkItem({ params, searchParams }: { params: Promi
                   {links(item.id).map((l) => (
                     <Tr key={`${l.id}${l.direction}`}>
                       <Td className="w-32 text-sm text-muted">{LINK_TYPES[l.type]?.[l.direction] ?? l.type}</Td>
-                      <Td className="font-mono text-sm">
+                      <Td className="whitespace-nowrap font-mono text-sm">
                         <Link href={`/items/${l.other_key}`}>{l.other_key}</Link>
                       </Td>
                       <Td>{l.other_summary}</Td>

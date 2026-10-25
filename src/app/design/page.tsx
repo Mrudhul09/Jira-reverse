@@ -107,7 +107,7 @@ export default function DesignPage() {
           </thead>
           <tbody>
             <Tr>
-              <Td className="font-mono text-sm">SH-1</Td>
+              <Td className="whitespace-nowrap font-mono text-sm">SH-1</Td>
               <Td>A very long summary that wraps onto two lines when the screen is narrow enough to need it</Td>
               <Td>
                 <Lozenge tone="inprogress">In progress</Lozenge>

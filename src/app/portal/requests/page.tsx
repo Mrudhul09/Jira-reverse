@@ -58,7 +58,7 @@ export default async function MyRequests({ searchParams }: { searchParams: Promi
           <tbody>
             {items.map((i) => (
               <Tr key={i.id}>
-                <Td className="font-mono text-sm">
+                <Td className="whitespace-nowrap font-mono text-sm">
                   <Link href={`/portal/requests/${i.key}`}>{i.key}</Link>
                 </Td>
                 <Td>

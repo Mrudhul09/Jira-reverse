@@ -46,7 +46,7 @@ export default async function QueuePage({ params, searchParams }: { params: Prom
   const now = new Date();
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
       <nav aria-label="Queues" className="self-start rounded-lg border border-line bg-canvas">
         <div className="flex items-center justify-between border-b border-line px-3 py-2">
           <h2 className="text-base">Queues</h2>

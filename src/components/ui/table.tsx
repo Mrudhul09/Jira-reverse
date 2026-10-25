@@ -3,7 +3,7 @@ import { cx } from "./index";
 
 export function Table({ className, ...rest }: ComponentProps<"table">) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-line bg-canvas">
+    <div className="relative overflow-x-auto rounded-lg border border-line bg-canvas">
       <table className={cx("w-full border-collapse", className)} {...rest} />
     </div>
   );
