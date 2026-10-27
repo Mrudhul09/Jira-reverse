@@ -52,4 +52,12 @@ HTTPS: put IIS (with URL Rewrite + ARR) or Caddy in front of port 3000 with the 
 - [ ] Core flow on the live site: raise a request on a phone, reply as an agent, resolve, rate
 - [ ] Error log: the service's stdout/stderr kept in a log file
 
-Live URL: http://localhost:3100 (this server only), once the admin password is set and the task started.
+Live URL: http://localhost:3100 (this server only). Live since 2026-10-27; admin mrudhul555@gmail.com created on first start.
+
+## First start (2026-10-27)
+
+- The first attempt didn't create the admin: the password contained `#`, which the env loader reads as a comment,
+  so it arrived too short. The value is now in single quotes; `.env.example` says so.
+- The same attempt found a bug: a failed first start left an empty database in use with no retry (the background
+  worker swallowed the error). Fixed in c4ae894; a failed first start now logs the error and retries on the next request.
+- `/api/health` ok, sign-in page 200, admin present, no demo data, demo logins hidden.
