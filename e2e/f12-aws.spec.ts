@@ -108,3 +108,24 @@ test.describe("F12 AWS CloudWatch alarms", () => {
     expect(one<{ n: number }>("select count(*) as n from alerts").n).toBe(before);
   });
 });
+
+test("F12-H2 an RDS alarm records the database in the CMDB", async ({ as }) => {
+  const page = await as(null);
+  const s = stamp();
+  const message = JSON.stringify({
+    AlarmName: `db-connections-${s}`,
+    AWSAccountId: "111122223333",
+    NewStateValue: "ALARM",
+    NewStateReason: "Threshold Crossed: 1 datapoint [412.0 (27/10/26 10:00:00)] was greater than the threshold (300.0).",
+    AlarmArn: `arn:aws:cloudwatch:us-east-1:111122223333:alarm:db-connections-${s}`,
+    Trigger: { MetricName: "DatabaseConnections", Namespace: "AWS/RDS", Threshold: 300, Dimensions: [{ name: "DBInstanceIdentifier", value: `orders-db-${s}` }] },
+  });
+  expect((await sns(page, message)).status()).toBe(201);
+  const row = one<{ type: string; attrs: string }>(
+    "select t.name as type, o.attrs_json as attrs from asset_objects o join asset_types t on t.id = o.type_id where o.label = ?",
+    `orders-db-${s}`,
+  );
+  expect(row.type).toBe("RDS database");
+  expect(JSON.parse(row.attrs)).toMatchObject({ resource_id: `orders-db-${s}`, kind: "AWS/RDS", dimension: "DBInstanceIdentifier", region: "us-east-1" });
+  expect(one<{ a: string | null }>("select asset_id as a from alerts where alias like ?", `%:alarm:db-connections-${s}`).a).not.toBeNull();
+});

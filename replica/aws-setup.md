@@ -71,3 +71,9 @@ Test without waiting for real load: `aws cloudwatch set-alarm-state --alarm-name
 Every SNS message must pass three checks before anything is stored: the secret token in the URL, an allowed topic,
 and AWS's signature (the certificate must come from an `sns.<region>.amazonaws.com` address). The endpoint is
 rate-limited with the other alert intake (60 a minute).
+
+## Other AWS resources
+
+Alarms on RDS, load balancers, Lambda, EBS, S3, DynamoDB, ECS and SQS each get a record under Assets → AWS
+(e.g. "RDS database", keyed by the alarm's DBInstanceIdentifier); anything else goes under "AWS resource".
+Only EC2 servers get live details looked up; the others hold what the alarm says (name, service, region, account).

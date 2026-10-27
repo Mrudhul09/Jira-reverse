@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { raiseAlert, setAlertStatus } from "@/lib/alerts";
-import { describeInstance, openAlertFor, parseAlarm, upsertInstance } from "@/lib/aws";
+import { describeInstance, openAlertFor, parseAlarm, upsertResource } from "@/lib/aws";
 import { isSnsUrl, verifySns, type SnsMessage } from "@/lib/sns";
 import { robot } from "@/lib/automation";
 import { get } from "@/lib/db";
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
   // The server's record in the CMDB, with live details from EC2 when the role allows it.
   const lookup = alarm.instanceId ? await describeInstance(alarm.region, alarm.instanceId) : { details: null };
-  const assetId = upsertInstance(alarm, lookup.details);
+  const assetId = upsertResource(alarm, lookup.details);
   const name = lookup.details?.name;
   const what = alarm.metric ? `${alarm.metric}${alarm.value !== null ? ` ${alarm.value}` : ""}` : "alarm";
   const where = alarm.resource ? ` on ${name ? `${name} (${alarm.resource})` : alarm.resource}` : "";
