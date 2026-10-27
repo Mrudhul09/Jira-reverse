@@ -42,7 +42,17 @@ export function db(): Conn {
     migrate(conn);
     g.__itsmDb = conn;
     const empty = (conn.prepare("select count(*) as n from users").get() as { n: number }).n === 0;
-    if (empty) seedIfEmpty();
+    if (empty) {
+      // A failed first start (say, a missing admin password) must not leave an unseeded connection cached.
+      try {
+        seedIfEmpty();
+      } catch (err) {
+        g.__itsmDb = undefined;
+        conn.close();
+        console.error(err);
+        throw err;
+      }
+    }
   }
   return g.__itsmDb;
 }
