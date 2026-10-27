@@ -2,7 +2,7 @@
 
 import { ICON_NAMES } from "@/components/RequestTypeIcon";
 import { requireAdmin } from "@/lib/auth";
-import { ACTION_TYPES, type Action, type Conditions, type Trigger } from "@/lib/automation";
+import { ACTION_TYPES, METRIC_OPS, type Action, type Conditions, type MetricOp, type Trigger } from "@/lib/automation";
 import { get, now, run, tx, uid } from "@/lib/db";
 import { back, bool, id, ids, num, oneOf, str } from "@/lib/form";
 import { releaseHeld } from "@/lib/mail";
@@ -31,6 +31,17 @@ export async function saveRuleAction(fd: FormData): Promise<void> {
   const text = str(fd, "textContains", 100);
   if (text) c.textContains = text;
   if (bool(fd, "noTeam")) c.noTeam = true;
+  const source = str(fd, "source", 40);
+  if (source) c.source = source;
+  const metric = str(fd, "metric", 120);
+  if (metric) c.metric = metric;
+  const op = str(fd, "metricOp", 2);
+  const limit = str(fd, "metricValue", 32);
+  if (op || limit) {
+    if (!(op in METRIC_OPS) || limit === "" || !Number.isFinite(Number(limit))) back("/automation", { error: "For a value check, pick above or below and give a number." });
+    c.metricOp = op as MetricOp;
+    c.metricValue = Number(limit);
+  }
   const actions: Action[] = [];
   for (const n of [1, 2, 3]) {
     const type = str(fd, `a${n}`);
@@ -49,8 +60,12 @@ export async function saveRuleAction(fd: FormData): Promise<void> {
     } else actions.push({ type: t });
   }
   if (!actions.length) back("/automation", { error: "Add at least one step." });
+  // For alerts, steps that change work need an incident opened by an earlier step.
   const alertOk = new Set(["open_incident", "page_oncall", "notify_user"]);
-  if (trigger === "alert_created" && actions.some((a) => !alertOk.has(a.type))) back("/automation", { error: "For alerts, steps can only open an incident or tell people." });
+  const opened = actions.findIndex((a) => a.type === "open_incident");
+  if (trigger === "alert_created" && actions.some((a, n) => !alertOk.has(a.type) && (opened < 0 || n < opened))) {
+    back("/automation", { error: "For alerts, put “Open an incident” first; then later steps can set its priority, team or person." });
+  }
   if (trigger !== "alert_created" && actions.some((a) => a.type === "open_incident")) back("/automation", { error: "“Open an incident” only works for alerts." });
   const position = get<{ n: number }>("select count(*) as n from automation_rules")?.n ?? 0;
   run(

@@ -21,7 +21,15 @@ export interface Conditions {
   status?: string;
   textContains?: string;
   noTeam?: boolean;
+  // Alerts only: where it came from, and the measured value (CloudWatch alarms).
+  source?: string;
+  metric?: string;
+  metricOp?: MetricOp;
+  metricValue?: number;
 }
+
+export const METRIC_OPS = { ">": "above", ">=": "at or above", "<": "below", "<=": "at or below" } as const;
+export type MetricOp = keyof typeof METRIC_OPS;
 
 export type Action =
   | { type: "assign_team"; teamId: string }
@@ -57,6 +65,13 @@ interface Subject {
   status?: string;
   text: string;
   teamId: string | null;
+  source?: string;
+  metric?: string | null;
+  metricValue?: number | null;
+}
+
+function compare(v: number, op: MetricOp, limit: number): boolean {
+  return op === ">" ? v > limit : op === ">=" ? v >= limit : op === "<" ? v < limit : v <= limit;
 }
 
 function matches(c: Conditions, s: Subject): boolean {
@@ -65,6 +80,9 @@ function matches(c: Conditions, s: Subject): boolean {
   if (c.status && c.status !== s.status) return false;
   if (c.textContains && !s.text.toLowerCase().includes(c.textContains.toLowerCase())) return false;
   if (c.noTeam && s.teamId) return false;
+  if (c.source && c.source !== s.source) return false;
+  if (c.metric && c.metric.toLowerCase() !== (s.metric ?? "").toLowerCase()) return false;
+  if (c.metricOp && c.metricValue !== undefined && (s.metricValue == null || !compare(s.metricValue, c.metricOp, c.metricValue))) return false;
   return true;
 }
 
@@ -82,13 +100,15 @@ export function runAutomation(trigger: Trigger, ctx: { itemId?: string; alertId?
       const subject: Subject | null = item
         ? { category: item.category, priority: item.priority, status: item.status, text: `${item.summary}\n${item.description}`, teamId: item.team_id }
         : alert
-          ? { priority: alert.priority, text: `${alert.message}\n${alert.description}`, teamId: alert.team_id }
+          ? { priority: alert.priority, text: `${alert.message}\n${alert.description}`, teamId: alert.team_id, source: alert.source, metric: alert.metric, metricValue: alert.metric_value }
           : null;
       if (!subject || !matches(parseJson<Conditions>(rule.conditions_json, {}), subject)) continue;
       const done: string[] = [];
       let ok = true;
+      // Steps after "open an incident" act on that incident.
+      const c = { ...ctx };
       try {
-        for (const action of parseJson<Action[]>(rule.actions_json, [])) done.push(perform(action, bot, ctx));
+        for (const action of parseJson<Action[]>(rule.actions_json, [])) done.push(perform(action, bot, c));
       } catch (err) {
         ok = false;
         done.push(`stopped: ${(err as Error).message}`);
@@ -98,7 +118,7 @@ export function runAutomation(trigger: Trigger, ctx: { itemId?: string; alertId?
         "insert into automation_log (id, rule_id, item_id, ok, result, created_at) values (?, ?, ?, ?, ?, ?)",
         uid(),
         rule.id,
-        ctx.itemId ?? getAlert(ctx.alertId ?? "")?.incident_id ?? null,
+        c.itemId ?? getAlert(c.alertId ?? "")?.incident_id ?? null,
         ok ? 1 : 0,
         done.join("; "),
         now(),
@@ -150,6 +170,7 @@ function perform(a: Action, bot: User, ctx: { itemId?: string; alertId?: string 
     case "open_incident": {
       if (!ctx.alertId) throw new Error("open_incident needs an alert");
       const id = incidentFromAlert(ctx.alertId, bot.id);
+      ctx.itemId = id;
       return `opened ${getItem(id)?.key}`;
     }
   }

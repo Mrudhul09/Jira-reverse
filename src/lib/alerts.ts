@@ -18,6 +18,10 @@ export interface Alert {
   incident_id: string | null;
   count: number;
   escalated_at: number | null;
+  metric: string | null;
+  metric_value: number | null;
+  resource: string | null;
+  asset_id: string | null;
   created_at: number;
   updated_at: number;
 }
@@ -31,6 +35,10 @@ export interface NewAlert {
   priority?: number;
   alias?: string | null;
   teamId?: string | null;
+  metric?: string | null;
+  metricValue?: number | null;
+  resource?: string | null;
+  assetId?: string | null;
 }
 
 // An open alert with the same alias is the same trouble: count it, don't page again.
@@ -46,7 +54,7 @@ export function raiseAlert(a: NewAlert): { alert: Alert; repeat: boolean } {
   const id = uid();
   tx(() =>
     run(
-      "insert into alerts (id, number, alias, source, message, description, priority, team_id, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "insert into alerts (id, number, alias, source, message, description, priority, team_id, metric, metric_value, resource, asset_id, created_at, updated_at) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       id,
       nextNumber("alert"),
       a.alias ?? null,
@@ -55,6 +63,10 @@ export function raiseAlert(a: NewAlert): { alert: Alert; repeat: boolean } {
       a.description ?? "",
       a.priority ?? 3,
       a.teamId ?? null,
+      a.metric ?? null,
+      a.metricValue ?? null,
+      a.resource ?? null,
+      a.assetId ?? null,
       t,
       t,
     ),
@@ -83,5 +95,10 @@ export function incidentFromAlert(alertId: string, actorId: string): string {
   });
   run("update alerts set incident_id = ?, updated_at = ? where id = ?", item.id, now(), alertId);
   logHistory(item.id, actorId, "alert", null, `linked alert #${alert.number}`);
+  if (alert.asset_id) {
+    run("insert or ignore into item_assets (item_id, asset_id) values (?, ?)", item.id, alert.asset_id);
+    const label = get<{ label: string }>("select label from asset_objects where id = ?", alert.asset_id)?.label;
+    if (label) logHistory(item.id, actorId, "asset", null, label);
+  }
   return item.id;
 }

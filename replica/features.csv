@@ -83,3 +83,4 @@ Choose which emails you get,notifications,should,no,yes,fix 5: notifications the
 Sort queues by priority SLA age or update,queues,could,no,yes,fix 6: 2 App Store reviews (thin)
 Export assets to CSV and rename SLAs,assets,could,no,yes,fix 7: JSDCLOUD-9967 (585) and JSDCLOUD-119 (435)
 Form answers in emails to the requester,notifications,could,no,yes,fix 8: JSDCLOUD-4642 (1289 votes)
+AWS CloudWatch alarms into incidents with CMDB update,integrations,could,yes,yes,"SNS HTTPS subscription; EC2 details by IAM role; metric conditions in rules"

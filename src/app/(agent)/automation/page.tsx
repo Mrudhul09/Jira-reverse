@@ -6,7 +6,7 @@ import { SubmitButton } from "@/components/ui/submit";
 import { Table, Td, Th, Tr } from "@/components/ui/table";
 import { isAdmin } from "@/lib/access";
 import { requireAgent } from "@/lib/auth";
-import { TRIGGERS, type Action, type Conditions, type Rule } from "@/lib/automation";
+import { METRIC_OPS, TRIGGERS, type Action, type Conditions, type Rule } from "@/lib/automation";
 import { all, parseJson } from "@/lib/db";
 import { ago } from "@/lib/format";
 import { allStatuses, CATEGORIES, CATEGORY_LABEL, statusLabel } from "@/lib/workflows";
@@ -22,7 +22,7 @@ const STEP_LABELS: [string, string][] = [
   ["mark_major", "Make it a major incident"],
   ["notify_user", "Tell a person"],
   ["page_oncall", "Tell whoever is on call"],
-  ["open_incident", "Open an incident (alerts only)"],
+  ["open_incident", "Open an incident (alerts only; later steps then act on it)"],
 ];
 
 export default async function Automation({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -42,6 +42,9 @@ export default async function Automation({ searchParams }: { searchParams: Promi
       c.status ? `status is ${c.status}` : "",
       c.textContains ? `mentions “${c.textContains}”` : "",
       c.noTeam ? "no team yet" : "",
+      c.source === "cloudwatch" ? "from CloudWatch" : c.source ? `from ${c.source}` : "",
+      c.metric ? `metric ${c.metric}` : "",
+      c.metricOp && c.metricValue !== undefined ? `value ${METRIC_OPS[c.metricOp]} ${c.metricValue}` : "",
     ]
       .filter(Boolean)
       .join(", ") || "every time";
@@ -168,6 +171,13 @@ export default async function Automation({ searchParams }: { searchParams: Promi
                 <SelectField id="rstatus" name="status" label="Status is (for status changes)" placeholder="Any" options={allStatuses().map((s) => ({ value: s, label: statusLabel(null, s) }))} />
                 <TextField id="rtext" name="textContains" label="Mentions" placeholder="e.g. password" />
                 <Checkbox name="noTeam" label="No team set yet" />
+                <p className="text-xs text-muted">For new alerts, e.g. a CloudWatch alarm with CPUUtilization above 80:</p>
+                <SelectField id="rsource" name="source" label="Alert comes from" placeholder="Anywhere" options={[{ value: "cloudwatch", label: "AWS CloudWatch" }, { value: "api", label: "Alert API" }]} />
+                <TextField id="rmetric" name="metric" label="Metric is" placeholder="e.g. CPUUtilization" />
+                <div className="flex flex-wrap gap-3">
+                  <SelectField id="rop" name="metricOp" label="Value is" placeholder="Any value" options={Object.entries(METRIC_OPS).map(([value, label]) => ({ value, label }))} />
+                  <TextField id="rvalue" name="metricValue" label="Than" type="number" step="any" placeholder="80" />
+                </div>
               </fieldset>
               {[1, 2, 3].map((n) => (
                 <fieldset key={n} className="space-y-2 rounded-lg border border-line p-3">

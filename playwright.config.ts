@@ -17,6 +17,6 @@ export default defineConfig({
     url: "http://localhost:3200/login",
     timeout: 400_000,
     reuseExistingServer: !!process.env.PW_REUSE,
-    env: { DATABASE_PATH: "data/test/itsm.db", ALERT_TOKEN: "e2e-token", INBOUND_TOKEN: "e2e-mail", JOBS: "off", APP_URL: "http://localhost:3200", ALLOW_HTTP: "1" },
+    env: { DATABASE_PATH: "data/test/itsm.db", ALERT_TOKEN: "e2e-token", INBOUND_TOKEN: "e2e-mail", SNS_TOKEN: "e2e-sns", SNS_VERIFY: "off", SNS_TOPIC_ARNS: "arn:aws:sns:us-east-1:111122223333:glasswork-alarms", EC2_LOOKUP: "off", JOBS: "off", APP_URL: "http://localhost:3200", ALLOW_HTTP: "1" },
   },
 });

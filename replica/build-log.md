@@ -47,3 +47,13 @@ now a positioning context.
 Tests: F06-E5 extended, F10-H1, F10-N1, F11-H1, F11-E1 added. Full suite 63 / 63. The F06 approval helper
 now waits for its own result (it had been satisfied early by an unrelated "Overlaps" notice).
 Outgoing emails now carry `[KEY]` in the subject so replies thread back.
+
+## 2026-10-27: AWS CloudWatch alarms (owner's automation scenario)
+
+| ID | Date | State | Missing | Harder than expected |
+| --- | --- | --- | --- | --- |
+| /api/aws/sns | 2026-10-27 | done | needs a public HTTPS address before AWS can reach it | SNS signature check written by hand (token + topic list + signature); certificates only from sns.*.amazonaws.com |
+| CMDB from alarms | 2026-10-27 | done | other AWS resource types (RDS, ELB) are recorded on the alert, not in Assets | EC2 details need the server's IAM role; works without it, with fewer details |
+| Metric rules | 2026-10-27 | done | - | alert rules could only open incidents; now later steps act on the incident opened |
+
+Tests: F12-U1, F12-H1, F12-E1, F12-N1. Full suite 67 / 67. Setup guide: replica/aws-setup.md.
