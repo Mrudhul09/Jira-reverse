@@ -11,7 +11,7 @@ Every fix has a test that failed before it and passes after.
 | BUG-004 | S3 | A long unbroken summary makes the page scroll sideways | fixed |
 | BUG-005 | S3 | Request page sometimes has no page title for screen readers | fixed |
 | BUG-006 | S3 | Calendars use grid roles without rows (screen readers mis-read them) | fixed |
-| BUG-007 | S3 | Other forms lose what was typed when the server refuses them | open |
+| BUG-007 | S3 | Other forms lose what was typed when the server refuses them | fixed |
 
 ### BUG-001: Next.js 16.3.2 has critical security advisories
 
@@ -133,3 +133,7 @@ Status: open. Next step: move the raise-request and raise-work forms to `useActi
 
 - Emails actually arriving (needs a Resend key): manual case M1.
 - A full screen-reader pass with NVDA: manual case M2.
+
+Fixed (BUG-007): a small client helper in the root layout keeps what was typed in the form that was sent, and
+puts it back when the server returns to the same page with an error. Test: F06-E5 now checks the summary and
+window are still filled in.

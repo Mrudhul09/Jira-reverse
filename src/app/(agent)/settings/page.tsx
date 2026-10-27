@@ -1,4 +1,4 @@
-import { anonymiseAction, releaseHeldAction, saveCalendarAction, saveCannedAction, saveGoalsAction, saveTeamAction, saveTypeAction, saveUserAction } from "@/app/actions/admin";
+import { addStatusAction, anonymiseAction, releaseHeldAction, removeStatusAction, saveWorkflowAction, saveCalendarAction, saveCannedAction, saveGoalsAction, saveTeamAction, saveTypeAction, saveUserAction } from "@/app/actions/admin";
 import { ICON_NAMES } from "@/components/RequestTypeIcon";
 import { Banners, Card, Lozenge, PageHead, Panel, TabLinks } from "@/components/ui";
 import { Checkbox, SelectField, TextArea, TextField } from "@/components/ui/field";
@@ -11,7 +11,7 @@ import { MAX_ATTEMPTS, mailConfigured } from "@/lib/mail";
 import { PRIORITY_LABEL } from "@/lib/priority";
 import type { Sla, SlaCalendar, SlaGoal } from "@/lib/sla";
 import type { FieldDef, RequestType, User } from "@/lib/types";
-import { CATEGORIES, CATEGORY_LABEL } from "@/lib/workflows";
+import { CATEGORIES, CATEGORY_LABEL, builtInWorkflow, statusLabel, workflowChanges } from "@/lib/workflows";
 
 export const metadata = { title: "Settings" };
 
@@ -21,6 +21,7 @@ const TABS = [
   ["teams", "Teams"],
   ["types", "What people can ask for"],
   ["slas", "Service levels"],
+  ["workflows", "Workflows"],
   ["replies", "Saved replies"],
   ["email", "Email and jobs"],
 ] as const;
@@ -42,6 +43,7 @@ export default async function Settings({ searchParams }: { searchParams: Promise
       {tab === "teams" ? <Teams teams={teams} /> : null}
       {tab === "types" ? <Types teams={teams} /> : null}
       {tab === "slas" ? <Slas /> : null}
+      {tab === "workflows" ? <Workflows /> : null}
       {tab === "replies" ? <Replies /> : null}
       {tab === "email" ? <EmailAndJobs /> : null}
     </>
@@ -502,6 +504,76 @@ function EmailAndJobs() {
           <p className="text-sm text-danger">No job has run yet. The worker starts a few seconds after the app does.</p>
         )}
       </Panel>
+    </div>
+  );
+}
+
+function Workflows() {
+  const added = workflowChanges().filter((c) => !c.base);
+  return (
+    <div className="space-y-4">
+      <p className="text-muted">Rename any status to match how your team talks, or add your own. A new status works like the one you pick: same kind, and work moves in and out of it the same way.</p>
+      {CATEGORIES.map((c) => {
+        const built = Object.entries(builtInWorkflow(c).statuses);
+        const mine = added.filter((a) => a.category === c);
+        return (
+          <Panel key={c} title={CATEGORY_LABEL[c]}>
+            <form action={saveWorkflowAction} className="space-y-3">
+              <input type="hidden" name="category" value={c} />
+              <Table>
+                <thead>
+                  <tr>
+                    <Th>Built-in status</Th>
+                    <Th>Shown as</Th>
+                    <Th>Kind</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {built.map(([s, t]) => (
+                    <Tr key={s}>
+                      <Td>{s}</Td>
+                      <Td>
+                        <input name={`name_${s}`} aria-label={`Name for ${s}`} defaultValue={statusLabel(c, s)} maxLength={40} className="control w-56" />
+                      </Td>
+                      <Td>
+                        <Lozenge tone={t}>{t === "todo" ? "To do" : t === "inprogress" ? "In progress" : "Done"}</Lozenge>
+                      </Td>
+                    </Tr>
+                  ))}
+                </tbody>
+              </Table>
+              <SubmitButton size="sm">Save names</SubmitButton>
+            </form>
+            {mine.length ? (
+              <ul className="mt-4 space-y-1.5">
+                {mine.map((a) => (
+                  <li key={a.id} className="flex flex-wrap items-center gap-2">
+                    <strong>{a.name}</strong>
+                    <span className="text-sm text-muted">works like {statusLabel(c, a.like_status ?? "")}</span>
+                    <form action={removeStatusAction}>
+                      <input type="hidden" name="id" value={a.id} />
+                      <SubmitButton size="sm" variant="subtle" aria-label={`Remove ${a.name}`}>
+                        Remove
+                      </SubmitButton>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <form action={addStatusAction} className="mt-4 flex flex-wrap items-end gap-3">
+              <input type="hidden" name="category" value={c} />
+              <TextField id={`wf-${c}-name`} name="name" label="New status" required maxLength={40} />
+              <SelectField
+                id={`wf-${c}-like`}
+                name="like"
+                label="Works like"
+                options={built.filter(([, t]) => t !== "done").map(([s]) => ({ value: s, label: statusLabel(c, s) }))}
+              />
+              <SubmitButton size="sm">Add status</SubmitButton>
+            </form>
+          </Panel>
+        );
+      })}
     </div>
   );
 }

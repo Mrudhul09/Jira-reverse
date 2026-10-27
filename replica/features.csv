@@ -69,8 +69,8 @@ AI summaries and virtual agent,ai,could,yes,skip,Atlassian Rovo platform
 Public status page,incidents,could,yes,skip,separate product (Statuspage)
 Slack and Teams two-way sync,channels,could,yes,skip,later through official APIs with our own app
 Approve from email,approvals,could,yes,skip,needs inbound mail handling; help center approval instead
-Raise requests by email (email channel),channels,should,yes,no,found in /replica-diff: recon source 1 lists email requests but the matrix missed it
-Admins customise workflows and statuses,work items,should,yes,no,found in /replica-diff: our four workflows are fixed in code
+Raise requests by email (email channel),channels,should,yes,yes,"POST /api/inbound-email from the mail provider's inbound webhook (INBOUND_TOKEN); [KEY] in the subject adds a reply; known senders only"
+Admins customise workflows and statuses,work items,should,yes,partial,"Settings > Workflows: rename any status, add statuses that work like a built-in one; transitions themselves stay fixed in code"
 Search with a query language (JQL / AQL style),queues,could,yes,no,found in /replica-diff: our queues use form filters instead
 Deployment tracking and gating from CI/CD,changes,could,yes,no,found in /replica-diff: recon source 17
 Several service projects with their own queues and settings,settings,could,yes,no,found in /replica-diff: one service desk for the whole company

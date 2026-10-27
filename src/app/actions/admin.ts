@@ -9,7 +9,7 @@ import { releaseHeld } from "@/lib/mail";
 import { hashPassword } from "@/lib/password";
 import type { SlaGoal } from "@/lib/sla";
 import type { FieldDef } from "@/lib/types";
-import { ALL_STATUSES, CATEGORIES, type Category } from "@/lib/workflows";
+import { CATEGORIES, allStatuses, builtInWorkflow, forgetWorkflows, workflow, workflowChanges, type Category } from "@/lib/workflows";
 
 // Automation
 
@@ -25,7 +25,7 @@ export async function saveRuleAction(fd: FormData): Promise<void> {
   if (prios.length) c.priorities = prios;
   const status = str(fd, "status", 60);
   if (status) {
-    if (!ALL_STATUSES.includes(status)) back("/automation", { error: `"${status}" isn't a status. Pick one from the list.` });
+    if (!allStatuses().includes(status)) back("/automation", { error: `"${status}" isn't a status. Pick one from the list.` });
     c.status = status;
   }
   const text = str(fd, "textContains", 100);
@@ -45,7 +45,7 @@ export async function saveRuleAction(fd: FormData): Promise<void> {
     } else if (t === "comment") actions.push({ type: t, body: str(fd, `a${n}_text`, 2000) || need("the message"), internal: bool(fd, `a${n}_internal`) });
     else if (t === "move") {
       const to = str(fd, `a${n}_status`, 60);
-      actions.push({ type: t, status: ALL_STATUSES.includes(to) ? to : need("a status") });
+      actions.push({ type: t, status: allStatuses().includes(to) ? to : need("a status") });
     } else actions.push({ type: t });
   }
   if (!actions.length) back("/automation", { error: "Add at least one step." });
@@ -289,4 +289,62 @@ export async function saveCannedAction(fd: FormData): Promise<void> {
   if (cannedId) run("update canned_responses set title = ?, body = ?, updated_at = ? where id = ?", title, body, now(), cannedId);
   else run("insert into canned_responses (id, title, body, created_at, updated_at) values (?, ?, ?, ?, ?)", uid(), title, body, now(), now());
   back(page, { ok: "Saved." });
+}
+
+// Workflows: rename the built-in statuses, add ones that behave like an existing status.
+
+const WF_PAGE = "/settings?tab=workflows";
+
+function namesClash(names: string[]): string | null {
+  const seen = new Set<string>();
+  for (const n of names) {
+    const k = n.toLowerCase();
+    if (seen.has(k)) return n;
+    seen.add(k);
+  }
+  return null;
+}
+
+export async function saveWorkflowAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const category = oneOf<Category>(str(fd, "category"), CATEGORIES, "service_request");
+  const built = Object.keys(builtInWorkflow(category).statuses);
+  const added = workflowChanges().filter((c) => c.category === category && !c.base);
+  const renames = built.map((base) => ({ base, name: str(fd, `name_${base}`, 40) || base }));
+  const clash = namesClash([...renames.map((r) => r.name), ...added.map((a) => a.name)]);
+  if (clash) back(WF_PAGE, { error: `Two statuses would both be called "${clash}". Give each its own name.` });
+  tx(() => {
+    run("delete from workflow_statuses where category = ? and base is not null", category);
+    for (const r of renames) {
+      if (r.name !== r.base) run("insert into workflow_statuses (id, category, name, base, created_at) values (?, ?, ?, ?, ?)", uid(), category, r.name, r.base, now());
+    }
+  });
+  forgetWorkflows();
+  back(WF_PAGE, { ok: "Status names saved." });
+}
+
+export async function addStatusAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const category = oneOf<Category>(str(fd, "category"), CATEGORIES, "service_request");
+  const name = str(fd, "name", 40);
+  const like = str(fd, "like", 60);
+  if (!name) back(WF_PAGE, { error: "A new status needs a name." });
+  if (!(like in builtInWorkflow(category).statuses)) back(WF_PAGE, { error: "Pick a built-in status for the new one to work like." });
+  const shown = Object.keys(workflow(category).statuses).map((s) => s.toLowerCase());
+  const labels = workflowChanges().filter((c) => c.category === category).map((c) => c.name.toLowerCase());
+  if (shown.includes(name.toLowerCase()) || labels.includes(name.toLowerCase())) back(WF_PAGE, { error: `There's already a status called "${name}".` });
+  run("insert into workflow_statuses (id, category, name, like_status, created_at) values (?, ?, ?, ?, ?)", uid(), category, name, like, now());
+  forgetWorkflows();
+  back(WF_PAGE, { ok: `Added "${name}". Work can move to it wherever it could move to ${like}.` });
+}
+
+export async function removeStatusAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const row = get<{ id: string; category: string; name: string }>("select id, category, name from workflow_statuses where id = ? and base is null", id(fd, "id") ?? "");
+  if (!row) back(WF_PAGE, { error: "That status doesn't exist." });
+  const n = get<{ n: number }>("select count(*) as n from items where category = ? and status = ?", row.category, row.name)!.n;
+  if (n) back(WF_PAGE, { error: `${n} work item${n === 1 ? " is" : "s are"} in "${row.name}". Move ${n === 1 ? "it" : "them"} on first.` });
+  run("delete from workflow_statuses where id = ?", row.id);
+  forgetWorkflows();
+  back(WF_PAGE, { ok: `Removed "${row.name}".` });
 }

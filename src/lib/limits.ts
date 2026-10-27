@@ -29,11 +29,14 @@ export function resetBlocked(ip: string, userId: string | null, at = now()): boo
 }
 
 // In-memory window for the alert API: monitoring storms shouldn't flood the database.
-const g = globalThis as unknown as { __itsmAlertHits?: number[] };
-export function alertIntakeBlocked(limitPerMinute = 60): boolean {
+const g = globalThis as unknown as { __itsmHits?: Record<string, number[]> };
+function burstBlocked(name: string, limitPerMinute: number): boolean {
   const t = now();
-  const hits = (g.__itsmAlertHits ?? []).filter((h) => h > t - MIN);
+  const all = (g.__itsmHits ??= {});
+  const hits = (all[name] ?? []).filter((h) => h > t - MIN);
   hits.push(t);
-  g.__itsmAlertHits = hits;
+  all[name] = hits;
   return hits.length > limitPerMinute;
 }
+export const alertIntakeBlocked = (limitPerMinute = 60) => burstBlocked("alerts", limitPerMinute);
+export const mailIntakeBlocked = (limitPerMinute = 30) => burstBlocked("mail", limitPerMinute);

@@ -1,15 +1,15 @@
-## Parity: 94.9 / 100 (features only)
+## Parity: 96.8 / 100 (features only)
 
-Date: 2026-10-25. Scored with the pack's `parity.py` (must 3, should 2, could 1; partial counts half;
+Date: 2026-10-27 (was 94.9 on 2026-10-25). Scored with the pack's `parity.py` (must 3, should 2, could 1; partial counts half;
 skipped rows and our own additions are not scored).
 
 | | |
 | --- | --- |
-| Feature score | **94.9** (70 counted) |
+| Feature score | **96.8** (70 counted) |
 | Must-haves | **30 of 30 done** |
 | Layout score | **not measured**: no screenshots of the original exist (no account, none supplied), so `imgdiff.py` has nothing to compare against. Our screens follow the recon map's structure; they were not measured against Jira's. |
-| Tests | 50 of 50 automated cases pass (twice); 48 of 48 screen checks at 1440px and 390px |
-| Open bugs | no S1, no S2; 1 S3 (BUG-007, forms lose typed text on a server-side refusal) |
+| Tests | 63 of 63 end-to-end tests pass; 48 of 48 screen checks at 1440px and 390px (2026-10-25) |
+| Open bugs | none (BUG-007 fixed 2026-10-27) |
 
 What the number does and doesn't say: it measures our own feature list, built from Atlassian's public
 docs. It says nothing about depth: Jira Service Management is far more configurable than this (workflow
@@ -18,8 +18,7 @@ missing from the first matrix; this step found them and added them, which took t
 
 ## Missing, in build order
 
-- [should] Raise requests by email (an inbox the service desk reads)
-- [should] Admins customise workflows and statuses (ours are four fixed workflows in code)
+- [should, partial] Admins customise workflows: statuses can be renamed and added; transitions can't be drawn by hand
 - [could] Deployment tracking and gating from CI/CD on changes
 - [could] Customer organisations (group requesters, e.g. by department)
 - [could] Search with a query language (ours: form filters, saved as queues)
@@ -56,7 +55,7 @@ Compared against what Atlassian's public docs describe (recon sources), not agai
 
 ## Verdict
 
-**Shippable** for internal use: every must-have done, feature score 94.9 (80+ needed), no open S1 or S2.
+**Shippable** for internal use: every must-have done, feature score 96.8 (80+ needed), no open bugs.
 
 **Better than the original** on the points its users push hardest for (updated after `/replica-entrepreneur`):
 all 8 fixes in `fixes.md` are built and tested, including four Atlassian feature requests with 655 to 1,515
@@ -64,8 +63,10 @@ votes each that have been open for 2 to 12 years. Still behind it on depth (see 
 
 ## Top five to build next
 
-1. Raise requests by email (should).
-2. Let admins rename and add statuses within the four workflows (should).
-3. BUG-007: keep what people typed when the server refuses a form (S3).
-4. Customer organisations / departments, so reports and queues can group by them (could).
-5. CI/CD deployment tracking on changes (could).
+Done on 2026-10-27: requests by email, renaming and adding statuses, BUG-007.
+
+1. Customer organisations / departments, so reports and queues can group by them (could).
+2. CI/CD deployment tracking on changes (could).
+3. Hand-drawn transitions in the workflow settings (rest of the should).
+4. Search with a query language (could).
+5. Several service projects (could).

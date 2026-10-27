@@ -1,7 +1,7 @@
 import type { SlaView } from "@/components/ui/sla-badge";
 import { all, marks, parseJson } from "./db";
 import type { Item } from "./types";
-import { WORKFLOWS, isDone } from "./workflows";
+import { workflow, isDone } from "./workflows";
 
 export interface SlaCalendar {
   id: string;
@@ -82,7 +82,7 @@ export function goalFor(sla: Sla, item: Pick<Item, "category" | "priority">): Sl
 
 export function slaStates(item: Item, changes: StatusChange[], config: ReturnType<typeof slaConfig>, at = Date.now()): SlaState[] {
   const out: SlaState[] = [];
-  const wf = WORKFLOWS[item.category];
+  const wf = workflow(item.category);
   const done = isDone(item.category, item.status);
   for (const sla of config.slas) {
     const goal = goalFor(sla, item);

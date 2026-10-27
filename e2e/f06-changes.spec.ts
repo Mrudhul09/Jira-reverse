@@ -12,7 +12,8 @@ async function change(page: Page, type: string, start = "2031-03-10T22:00", end 
 async function decide(page: Page, key: string, decision: "Approve" | "Decline") {
   await page.goto(`/items/${key}`);
   await page.getByRole("button", { name: decision }).click();
-  await expect(page.getByRole("main").getByRole("status").or(page.getByRole("main").getByRole("alert")).first()).toBeVisible();
+  // Wait for the decision's own result, not any notice that was already on the page.
+  await page.waitForURL(/[?&](ok|error)=/);
 }
 
 test.describe("F06 changes", () => {
@@ -68,11 +69,15 @@ test.describe("F06 changes", () => {
   test("F06-E5 a window that ends before it starts is refused", async ({ as }) => {
     const omar = await as(RAISER);
     await omar.goto("/items/new?category=change");
-    await field(omar, "Summary").fill(`Backwards ${stamp()}`);
+    const summary = `Backwards ${stamp()}`;
+    await field(omar, "Summary").fill(summary);
     await omar.getByLabel("Window starts").fill("2031-04-02T10:00");
     await omar.getByLabel("Window ends").fill("2031-04-02T09:00");
     await omar.getByRole("button", { name: "Raise change" }).click();
     await expect(omar.getByRole("main").getByRole("alert")).toContainText("has to end after it starts");
+    // BUG-007: what was typed is still there.
+    await expect(field(omar, "Summary")).toHaveValue(summary);
+    await expect(omar.getByLabel("Window starts")).toHaveValue("2031-04-02T10:00");
   });
 
   test("F06-E6 overlapping windows are flagged on both", async ({ as }) => {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ago } from "@/lib/format";
 import { headlineSla, slaStatesFor } from "@/lib/sla";
 import type { ItemRow } from "@/lib/types";
-import { CATEGORY_LABEL, tone, type Category } from "@/lib/workflows";
+import { CATEGORY_LABEL, statusLabel, tone, type Category } from "@/lib/workflows";
 import { SelectAll } from "./SelectAll";
 import { Lozenge, Person, PriorityMark } from "./ui";
 import { SlaBadge } from "./ui/sla-badge";
@@ -10,7 +10,7 @@ import { Table, Td, Th, Tr } from "./ui/table";
 
 export function Status({ category, status }: { category: Category; status: string }) {
   const t = status === "Declined" || status === "Failed" ? "bad" : tone(category, status);
-  return <Lozenge tone={t}>{status}</Lozenge>;
+  return <Lozenge tone={t}>{statusLabel(category, status)}</Lozenge>;
 }
 
 export function MajorTag() {

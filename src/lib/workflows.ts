@@ -1,3 +1,5 @@
+import { all } from "./db";
+
 export type Category = "service_request" | "incident" | "problem" | "change";
 export type StatusTone = "todo" | "inprogress" | "done";
 
@@ -26,7 +28,7 @@ interface Workflow {
   approval?: { status: string; approved: string; declined: string };
 }
 
-export const WORKFLOWS: Record<Category, Workflow> = {
+const BUILT_IN: Record<Category, Workflow> = {
   service_request: {
     initial: "Waiting for support",
     statuses: {
@@ -106,14 +108,63 @@ export const WORKFLOWS: Record<Category, Workflow> = {
   },
 };
 
-export const DONE_STATUSES = Array.from(
-  new Set(CATEGORIES.flatMap((c) => Object.entries(WORKFLOWS[c].statuses).filter(([, t]) => t === "done").map(([s]) => s))),
-);
+export interface WorkflowChange {
+  id: string;
+  category: Category;
+  name: string;
+  base: string | null;
+  like_status: string | null;
+}
 
-export const ALL_STATUSES = Array.from(new Set(CATEGORIES.flatMap((c) => Object.keys(WORKFLOWS[c].statuses))));
+// Built-in workflows with the admin's renames and added statuses on top. Cached for the whole
+// process (globalThis, so every bundle shares it) until an admin saves a change.
+const g = globalThis as unknown as { __itsmFlows?: { flows: Record<Category, Workflow>; labels: Record<Category, Record<string, string>> } };
+
+export const workflowChanges = () => all<WorkflowChange>("select id, category, name, base, like_status from workflow_statuses order by created_at");
+
+export function forgetWorkflows(): void {
+  g.__itsmFlows = undefined;
+}
+
+function load() {
+  if (g.__itsmFlows) return g.__itsmFlows;
+  const flows = structuredClone(BUILT_IN);
+  const labels = Object.fromEntries(CATEGORIES.map((c) => [c, {}])) as Record<Category, Record<string, string>>;
+  for (const ch of workflowChanges()) {
+    const wf = flows[ch.category];
+    if (ch.base) {
+      if (ch.base in wf.statuses) labels[ch.category][ch.base] = ch.name;
+      continue;
+    }
+    const like = ch.like_status!;
+    if (!(like in wf.statuses) || ch.name in wf.statuses) continue;
+    wf.statuses[ch.name] = wf.statuses[like];
+    wf.moves[ch.name] = [like, ...wf.moves[like]];
+    for (const [from, to] of Object.entries(wf.moves)) if (from !== ch.name && (to.includes(like) || from === like)) to.push(ch.name);
+    if (wf.paused.includes(like)) wf.paused.push(ch.name);
+  }
+  g.__itsmFlows = { flows, labels };
+  return g.__itsmFlows;
+}
+
+export const workflow = (category: Category): Workflow => load().flows[category];
+export const builtInWorkflow = (category: Category): Workflow => BUILT_IN[category];
+
+export const doneStatuses = (): string[] =>
+  Array.from(new Set(CATEGORIES.flatMap((c) => Object.entries(workflow(c).statuses).filter(([, t]) => t === "done").map(([s]) => s))));
+
+export const allStatuses = (): string[] => Array.from(new Set(CATEGORIES.flatMap((c) => Object.keys(workflow(c).statuses))));
+
+// What people see for a status. Without a category, the first rename found anywhere.
+export function statusLabel(category: Category | null, status: string): string {
+  const { labels } = load();
+  if (category) return labels[category][status] ?? status;
+  for (const c of CATEGORIES) if (labels[c][status]) return labels[c][status];
+  return status;
+}
 
 export function tone(category: Category, status: string): StatusTone {
-  return WORKFLOWS[category].statuses[status] ?? "todo";
+  return workflow(category).statuses[status] ?? "todo";
 }
 
 export function isDone(category: Category, status: string): boolean {
@@ -122,7 +173,7 @@ export function isDone(category: Category, status: string): boolean {
 
 // Standard changes are pre-approved; emergency changes may skip planning.
 export function nextStatuses(category: Category, status: string, changeType?: string | null): string[] {
-  const base = WORKFLOWS[category].moves[status] ?? [];
+  const base = workflow(category).moves[status] ?? [];
   if (category !== "change") return base;
   if (changeType === "standard" && status === "Planning") return ["Awaiting implementation", "Canceled"];
   if (changeType === "emergency" && status === "Review") return ["Awaiting approval", "Planning", "Canceled"];

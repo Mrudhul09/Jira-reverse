@@ -20,8 +20,9 @@ Date: 2026-10-25  Commit: afcc349  Go from user: **not yet**
 Hosting choice: this Windows Server, internal network (architecture.md). Not Vercel: the app stores data in a local SQLite file.
 
 - [ ] Fresh production database: a new folder, `SEED_DEMO=0`, migrations run on start
-- [ ] ★ `.env.local` on the server (names from `.env.example`): `APP_URL`, `SEED_DEMO=0`, `INITIAL_ADMIN_NAME/EMAIL/PASSWORD`, `ALERT_TOKEN`, `RESEND_API_KEY`, `MAIL_FROM`, `DATABASE_PATH`
+- [ ] ★ `.env.local` on the server (names from `.env.example`): `APP_URL`, `SEED_DEMO=0`, `INITIAL_ADMIN_NAME/EMAIL/PASSWORD`, `ALERT_TOKEN`, `INBOUND_TOKEN`, `RESEND_API_KEY`, `MAIL_FROM`, `DATABASE_PATH`
 - [ ] ★ Resend account; sending domain verified (SPF, DKIM, DMARC below)
+- [ ] ★ Email intake: a support address (e.g. help@yourcompany.com) whose provider posts incoming mail to `https://<host>/api/inbound-email` with the `x-inbound-token` header (Resend inbound, Postmark inbound or a forwarder)
 - [ ] Run as a Windows service so it restarts with the server (Task Scheduler "at startup" running `npm start`, or a service wrapper)
 - [ ] ★ Daily `npm run backup` in Task Scheduler; copy `backups/` off the server
 - [-] Stripe, OAuth: not used

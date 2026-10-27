@@ -9,7 +9,7 @@ import { requireAgent } from "@/lib/auth";
 import { TRIGGERS, type Action, type Conditions, type Rule } from "@/lib/automation";
 import { all, parseJson } from "@/lib/db";
 import { ago } from "@/lib/format";
-import { ALL_STATUSES, CATEGORIES, CATEGORY_LABEL } from "@/lib/workflows";
+import { allStatuses, CATEGORIES, CATEGORY_LABEL, statusLabel } from "@/lib/workflows";
 
 export const metadata = { title: "Automation" };
 
@@ -165,7 +165,7 @@ export default async function Automation({ searchParams }: { searchParams: Promi
                     <Checkbox key={p} name="priorities" value={p} label={`P${p}`} />
                   ))}
                 </div>
-                <SelectField id="rstatus" name="status" label="Status is (for status changes)" placeholder="Any" options={ALL_STATUSES.map((s) => ({ value: s, label: s }))} />
+                <SelectField id="rstatus" name="status" label="Status is (for status changes)" placeholder="Any" options={allStatuses().map((s) => ({ value: s, label: statusLabel(null, s) }))} />
                 <TextField id="rtext" name="textContains" label="Mentions" placeholder="e.g. password" />
                 <Checkbox name="noTeam" label="No team set yet" />
               </fieldset>
@@ -177,7 +177,7 @@ export default async function Automation({ searchParams }: { searchParams: Promi
                     <SelectField id={`a${n}_team`} name={`a${n}_team`} label="Team" placeholder="-" options={teams.map((t) => ({ value: t.id, label: t.name }))} />
                     <SelectField id={`a${n}_user`} name={`a${n}_user`} label="Person" placeholder="-" options={people.map((p) => ({ value: p.id, label: p.name }))} />
                     <SelectField id={`a${n}_priority`} name={`a${n}_priority`} label="Priority" placeholder="-" options={[1, 2, 3, 4, 5].map((p) => ({ value: p, label: `P${p}` }))} />
-                    <SelectField id={`a${n}_status`} name={`a${n}_status`} label="Status" placeholder="-" options={ALL_STATUSES.map((s) => ({ value: s, label: s }))} />
+                    <SelectField id={`a${n}_status`} name={`a${n}_status`} label="Status" placeholder="-" options={allStatuses().map((s) => ({ value: s, label: statusLabel(null, s) }))} />
                   </div>
                   <TextField id={`a${n}_text`} name={`a${n}_text`} label="Message" />
                   <Checkbox name={`a${n}_internal`} label="Internal note, not a reply" />

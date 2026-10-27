@@ -35,3 +35,15 @@ recon map for layout and hierarchy, not measured pixels.
 Found while checking: on phones, screen-reader-only labels inside scrolling
 tables escaped their box and made pages scroll sideways; the table wrapper is
 now a positioning context.
+
+## 2026-10-27: closing the parity gaps (replica-build)
+
+| ID | Date | State | Missing | Harder than expected |
+| --- | --- | --- | --- | --- |
+| BUG-007 | 2026-10-27 | done | - | React resets forms after an action, so typed values are put back just after that reset |
+| Email intake (/api/inbound-email) | 2026-10-27 | done | needs the mail provider's inbound webhook pointed at it, owner action at deploy | quoted earlier text is cut off replies with simple rules; unusual mail clients may leave some in |
+| Settings > Workflows | 2026-10-27 | partial | transitions can't be drawn by hand; built-in statuses can't be deleted | statuses were constants used everywhere; now one cached overlay (`workflow()`), cleared when an admin saves |
+
+Tests: F06-E5 extended, F10-H1, F10-N1, F11-H1, F11-E1 added. Full suite 63 / 63. The F06 approval helper
+now waits for its own result (it had been satisfied early by an unrelated "Overlaps" notice).
+Outgoing emails now carry `[KEY]` in the subject so replies thread back.

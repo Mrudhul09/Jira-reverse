@@ -17,6 +17,6 @@ export default defineConfig({
     url: "http://localhost:3200/login",
     timeout: 400_000,
     reuseExistingServer: !!process.env.PW_REUSE,
-    env: { DATABASE_PATH: "data/test/itsm.db", ALERT_TOKEN: "e2e-token", JOBS: "off", APP_URL: "http://localhost:3200", ALLOW_HTTP: "1" },
+    env: { DATABASE_PATH: "data/test/itsm.db", ALERT_TOKEN: "e2e-token", INBOUND_TOKEN: "e2e-mail", JOBS: "off", APP_URL: "http://localhost:3200", ALLOW_HTTP: "1" },
   },
 });

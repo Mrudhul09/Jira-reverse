@@ -4,7 +4,7 @@ import { sendQueued } from "./mail";
 import { notify, notifyTeam } from "./notify";
 import { slaStatesFor } from "./sla";
 import type { ItemRow } from "./types";
-import { DONE_STATUSES } from "./workflows";
+import { doneStatuses } from "./workflows";
 
 const g = globalThis as unknown as { __itsmWorker?: ReturnType<typeof setInterval>; __itsmJobsBusy?: boolean };
 
@@ -20,7 +20,7 @@ async function record(job: string, fn: () => Promise<string> | string): Promise<
 
 // Tells the assignee (or the team) once when an SLA is nearly due, and once when it's missed.
 export function slaWatch(at = now()): string {
-  const open = all<ItemRow>(`${ITEM_SELECT} where i.status not in (${marks(DONE_STATUSES.length)})`, ...DONE_STATUSES);
+  const open = all<ItemRow>(`${ITEM_SELECT} where i.status not in (${marks(doneStatuses().length)})`, ...doneStatuses());
   let sent = 0;
   for (const [itemId, states] of slaStatesFor(open, at)) {
     const item = open.find((i) => i.id === itemId)!;

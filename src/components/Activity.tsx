@@ -1,5 +1,6 @@
 import { ago, dateTime } from "@/lib/format";
 import type { Comment, HistoryRow } from "@/lib/types";
+import { statusLabel } from "@/lib/workflows";
 import { Avatar, Lozenge, cx } from "./ui";
 
 const FIELD: Record<string, string> = {
@@ -18,7 +19,8 @@ const FIELD: Record<string, string> = {
 
 function say(h: HistoryRow): string {
   if (h.field === "created") return `raised this (${h.new_value})`;
-  if (h.field === "status") return `moved it from ${h.old_value} to ${h.new_value}`;
+  if (h.field === "status") return `moved it from ${statusLabel(null, h.old_value ?? "")} to ${statusLabel(null, h.new_value ?? "")}`;
+  if (h.field === "channel") return `sent it by ${h.new_value}`;
   if (h.field === "approval") return h.new_value ?? "";
   if (["link", "responder", "stakeholder", "asset", "service", "alert", "article", "pir"].includes(h.field)) {
     return h.new_value === "removed" ? `removed ${h.field} ${h.old_value}` : `${h.field}: ${h.new_value ?? h.old_value ?? ""}`;

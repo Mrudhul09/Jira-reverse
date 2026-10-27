@@ -7,7 +7,7 @@ import { all, marks } from "@/lib/db";
 import { ago } from "@/lib/format";
 import { ITEM_SELECT } from "@/lib/items";
 import type { ItemRow } from "@/lib/types";
-import { DONE_STATUSES } from "@/lib/workflows";
+import { doneStatuses } from "@/lib/workflows";
 
 export const metadata = { title: "My requests" };
 
@@ -19,9 +19,9 @@ export default async function MyRequests({ searchParams }: { searchParams: Promi
     view === "approvals"
       ? all<ItemRow>(`${ITEM_SELECT} where i.id in (select item_id from approvals where approver_id = ?) order by i.updated_at desc limit 200`, user.id)
       : all<ItemRow>(
-          `${ITEM_SELECT} where i.reporter_id = ? and i.status ${view === "open" ? "not in" : "in"} (${marks(DONE_STATUSES.length)}) order by i.updated_at desc limit 200`,
+          `${ITEM_SELECT} where i.reporter_id = ? and i.status ${view === "open" ? "not in" : "in"} (${marks(doneStatuses().length)}) order by i.updated_at desc limit 200`,
           user.id,
-          ...DONE_STATUSES,
+          ...doneStatuses(),
         );
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 md:px-6">

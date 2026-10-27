@@ -2,7 +2,7 @@ import { get, nextNumber, run, tx, uid } from "./db";
 import { hashPassword } from "./password";
 import { seedBase } from "./seed-base";
 import type { FieldDef } from "./types";
-import { WORKFLOWS, type Category } from "./workflows";
+import { workflow, type Category } from "./workflows";
 
 export const DEMO_PASSWORD = "demo-itsm-2026";
 
@@ -394,7 +394,7 @@ export function seedIfEmpty(): void {
       const id = uid();
       const first = o.path[0];
       const last = o.path[o.path.length - 1];
-      const done = WORKFLOWS[o.category].statuses[last[0]] === "done";
+      const done = workflow(o.category).statuses[last[0]] === "done";
       run(
         `insert into items (id, key, category, request_type_id, summary, description, status, priority, impact, urgency, reporter_id, assignee_id, team_id, is_major,
            change_type, change_risk, planned_start, planned_end, plan_implementation, plan_backout, plan_test, root_cause, workaround, fields_json,

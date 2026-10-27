@@ -51,7 +51,7 @@ export function notify(userId: string | null | undefined, itemId: string | null,
   const context = item && item.reporter_id === userId ? `\n\n${answers(item)}` : "";
   queueEmail(
     to.email,
-    message,
+    item && !message.includes(item.key) ? `[${item.key}] ${message}` : message,
     `${message}${context}\n\nOpen it: ${link}\n\nChoose which emails you get under "Your account" in the app.`,
     itemId,
   );

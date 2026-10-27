@@ -1,24 +1,25 @@
 import Link from "next/link";
 import { headlineSla, slaStatesFor } from "@/lib/sla";
 import type { ItemRow } from "@/lib/types";
-import { WORKFLOWS } from "@/lib/workflows";
+import { statusLabel, workflow } from "@/lib/workflows";
 import { PriorityMark } from "./ui";
 import { SlaBadge } from "./ui/sla-badge";
 import { MajorTag } from "./work";
 
 // One column per status that has work in it, in workflow order.
 export function Board({ items }: { items: ItemRow[] }) {
-  const order = Array.from(new Set(items.flatMap((i) => Object.keys(WORKFLOWS[i.category].statuses))));
+  const order = Array.from(new Set(items.flatMap((i) => Object.keys(workflow(i.category).statuses))));
   const columns = order.filter((s) => items.some((i) => i.status === s));
   const slas = slaStatesFor(items);
   return (
     <div className="flex gap-3 overflow-x-auto pb-2">
       {columns.map((s) => {
         const here = items.filter((i) => i.status === s);
+        const name = statusLabel(here[0].category, s);
         return (
-          <section key={s} aria-label={`${s}, ${here.length}`} className="w-64 flex-none rounded-lg bg-surface p-2">
+          <section key={s} aria-label={`${name}, ${here.length}`} className="w-64 flex-none rounded-lg bg-surface p-2">
             <h3 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-muted">
-              {s} · {here.length}
+              {name} · {here.length}
             </h3>
             <ul className="space-y-2">
               {here.map((i) => {

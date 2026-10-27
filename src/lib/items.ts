@@ -4,7 +4,7 @@ import { all, get, nextNumber, now, run, tx, uid, type Param } from "./db";
 import { notify, notifyTeam } from "./notify";
 import { PRIORITY_LABEL, priorityFrom } from "./priority";
 import type { Approval, Comment, HistoryRow, Item, ItemRow, RequestType, User } from "./types";
-import { CATEGORY_LABEL, WORKFLOWS, isDone, nextStatuses, type Category } from "./workflows";
+import { CATEGORY_LABEL, workflow, isDone, nextStatuses, statusLabel, type Category } from "./workflows";
 
 export const ITEM_SELECT = `
   select i.*, r.name as reporter_name, a.name as assignee_name, t.name as team_name, rt.name as request_type_name
@@ -69,7 +69,7 @@ export interface NewItem {
 
 export function createItem(n: NewItem): ItemRow {
   const rt = n.requestType ?? null;
-  const wf = WORKFLOWS[n.category];
+  const wf = workflow(n.category);
   const approverId = n.category === "service_request" ? (rt?.approver_id ?? null) : null;
   const status = approverId && wf.approval ? wf.approval.status : wf.initial;
   const priority = n.priority ?? (n.impact && n.urgency ? priorityFrom(n.impact, n.urgency) : 3);
@@ -156,7 +156,7 @@ export function moveItem(itemId: string, to: string, actorId: string | null, opt
   const item = getItem(itemId);
   if (!item) return { ok: false, error: "That work item doesn't exist." };
   if (item.status === to) return { ok: true };
-  const wf = WORKFLOWS[item.category];
+  const wf = workflow(item.category);
   if (!(to in wf.statuses)) return { ok: false, error: `"${to}" isn't a status for this kind of work.` };
   if (!opts.system && !nextStatuses(item.category, item.status, item.change_type).includes(to)) {
     return { ok: false, error: `${item.key} can't go from ${item.status} to ${to}.` };
@@ -172,7 +172,7 @@ export function moveItem(itemId: string, to: string, actorId: string | null, opt
       else addApprovals(itemId, peerIds(item), "any", `Peer review ${round(itemId, "Peer review")}`);
     }
   });
-  if (actorId !== item.reporter_id) notify(item.reporter_id, itemId, `${item.key} is now ${to}`, "my_requests");
+  if (actorId !== item.reporter_id) notify(item.reporter_id, itemId, `${item.key} is now ${statusLabel(item.category, to)}`, "my_requests");
   runAutomation("status_changed", { itemId });
   return { ok: true };
 }
@@ -182,7 +182,7 @@ export function decide(approvalId: string, user: User, decision: "approved" | "d
   if (!a || a.approver_id !== user.id) return { ok: false, error: "That approval isn't yours to decide." };
   if (a.decision !== "pending") return { ok: false, error: "That approval has already been decided." };
   const item = getItem(a.item_id);
-  const flow = item ? WORKFLOWS[item.category].approval : undefined;
+  const flow = item ? workflow(item.category).approval : undefined;
   if (!item || !flow || item.status !== flow.status) return { ok: false, error: "That work item is no longer waiting for approval." };
   tx(() => {
     run("update approvals set decision = ?, note = ?, decided_at = ? where id = ?", decision, note, now(), approvalId);
@@ -364,7 +364,7 @@ export function mergeItem(fromId: string, intoKey: string, actor: User): Result 
   if (from.id === into.id) return { ok: false, error: "An item can't merge into itself." };
   if (from.category !== into.category) return { ok: false, error: `Only the same kind of work can merge: ${from.key} and ${into.key} differ.` };
   if (isDone(into.category, into.status)) return { ok: false, error: `${into.key} is already finished; merge into one that's open.` };
-  const closed = WORKFLOWS[from.category].statuses.Closed === "done" ? "Closed" : "Canceled";
+  const closed = workflow(from.category).statuses.Closed === "done" ? "Closed" : "Canceled";
   tx(() => {
     run("update comments set item_id = ? where item_id = ?", into.id, from.id);
     for (const t of ["item_services", "item_assets"]) {

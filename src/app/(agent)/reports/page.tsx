@@ -7,7 +7,7 @@ import { ITEM_SELECT } from "@/lib/items";
 import { PRIORITY_LABEL } from "@/lib/priority";
 import { slaStatesFor } from "@/lib/sla";
 import type { ItemRow } from "@/lib/types";
-import { CATEGORIES, CATEGORY_LABEL, DONE_STATUSES } from "@/lib/workflows";
+import { CATEGORIES, CATEGORY_LABEL, doneStatuses } from "@/lib/workflows";
 
 export const metadata = { title: "Reports" };
 
@@ -32,7 +32,7 @@ export default async function Reports({ searchParams }: { searchParams: Promise<
   const days = [7, 14, 30, 90].includes(Number((await searchParams).days)) ? Number((await searchParams).days) : 14;
   const now = Date.now();
   const since = now - days * DAY;
-  const open = all<ItemRow>(`${ITEM_SELECT} where i.status not in (${marks(DONE_STATUSES.length)})`, ...DONE_STATUSES);
+  const open = all<ItemRow>(`${ITEM_SELECT} where i.status not in (${marks(doneStatuses().length)})`, ...doneStatuses());
   const finished = all<ItemRow>(`${ITEM_SELECT} where i.resolved_at >= ?`, since);
   const openSla = slaStatesFor(open, now);
   const breached = open.filter((i) => (openSla.get(i.id) ?? []).some((s) => s.state === "breached")).length;

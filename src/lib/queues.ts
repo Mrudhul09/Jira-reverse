@@ -1,7 +1,7 @@
 import { all, get, marks, parseJson, type Param } from "./db";
 import { ITEM_SELECT } from "./items";
 import type { ItemRow } from "./types";
-import { DONE_STATUSES, type Category } from "./workflows";
+import { doneStatuses, type Category } from "./workflows";
 
 export interface Filter {
   categories?: Category[];
@@ -32,8 +32,8 @@ export function where(f: Filter, userId: string): { sql: string; params: Param[]
   }
   const scope = f.scope ?? "open";
   if (scope !== "all") {
-    parts.push(`i.status ${scope === "open" ? "not in" : "in"} (${marks(DONE_STATUSES.length)})`);
-    params.push(...DONE_STATUSES);
+    parts.push(`i.status ${scope === "open" ? "not in" : "in"} (${marks(doneStatuses().length)})`);
+    params.push(...doneStatuses());
   }
   if (f.assignee === "me") {
     parts.push("i.assignee_id = ?");

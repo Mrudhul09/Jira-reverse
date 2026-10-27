@@ -13,7 +13,7 @@ import { requireAgent } from "@/lib/auth";
 import { all } from "@/lib/db";
 import { listItems, queuesFor, showCount } from "@/lib/queues";
 import { headlineSla, slaStatesFor } from "@/lib/sla";
-import { ALL_STATUSES } from "@/lib/workflows";
+import { allStatuses, statusLabel } from "@/lib/workflows";
 
 type Sp = Record<string, string | undefined>;
 
@@ -130,8 +130,8 @@ export default async function QueuePage({ params, searchParams }: { params: Prom
           </label>
           <select id="fs" name="status" defaultValue={sp.status ?? ""} className="control w-44">
             <option value="">Any status</option>
-            {ALL_STATUSES.map((s) => (
-              <option key={s}>{s}</option>
+            {allStatuses().map((s) => (
+              <option key={s} value={s}>{statusLabel(null, s)}</option>
             ))}
           </select>
           <label className="sr-only" htmlFor="fa">
@@ -217,8 +217,8 @@ export default async function QueuePage({ params, searchParams }: { params: Prom
                 Move to
               </label>
               <select id="b-to" name="to" className="control w-48">
-                {ALL_STATUSES.map((s) => (
-                  <option key={s}>{s}</option>
+                {allStatuses().map((s) => (
+                  <option key={s} value={s}>{statusLabel(null, s)}</option>
                 ))}
               </select>
               <SubmitButton size="sm" variant="secondary" name="op" value="move">

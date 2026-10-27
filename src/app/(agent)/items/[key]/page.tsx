@@ -18,7 +18,7 @@ import { LINK_TYPES, approvals, comments, getItemByKey, history, links } from "@
 import { IMPACT_LABEL, PRIORITY_LABEL, URGENCY_LABEL } from "@/lib/priority";
 import { slaStatesFor } from "@/lib/sla";
 import type { FieldDef } from "@/lib/types";
-import { CATEGORY_LABEL, CATEGORY_PATH, WORKFLOWS, isDone, nextStatuses } from "@/lib/workflows";
+import { CATEGORY_LABEL, CATEGORY_PATH, workflow, isDone, nextStatuses, statusLabel } from "@/lib/workflows";
 
 type Show = "comments" | "all" | "history";
 
@@ -60,7 +60,7 @@ export default async function WorkItem({ params, searchParams }: { params: Promi
   const sp = await searchParams;
   const page = `/items/${item.key}`;
   const show: Show = sp.show === "all" || sp.show === "history" ? sp.show : "comments";
-  const flow = WORKFLOWS[item.category];
+  const flow = workflow(item.category);
   const moves = nextStatuses(item.category, item.status, item.change_type);
   const decisions = approvals(item.id);
   const mine = decisions.find((a) => a.approver_id === user.id && a.decision === "pending");
@@ -128,7 +128,7 @@ export default async function WorkItem({ params, searchParams }: { params: Promi
               <input type="hidden" name="itemId" value={item.id} />
               <input type="hidden" name="to" value={to} />
               <SubmitButton size="sm" variant={isDone(item.category, to) && to !== "Canceled" ? "primary" : "secondary"}>
-                {to}
+                {statusLabel(item.category, to)}
               </SubmitButton>
             </form>
           ))}
