@@ -1,13 +1,13 @@
 # Deploy checklist: Glasswork
 
-Date: 2026-10-25  Commit: afcc349  Go from user: **not yet**
+Date: 2026-10-27  Commit: e51cb6d  Go from user: **yes (2026-10-27), this server only for now**
 
 ## Preflight (all must pass)
 
-- [x] e2e suite green: 58 / 58 (full run at 10ac417; launch commit adds 1 test, passed). One flaky failure seen once during the brand step, not reproduced on re-run
-- [x] no open S1 or S2 bugs (bugs.md: 6 fixed, 1 open S3)
-- [x] parity: all must-haves done (30/30), feature score 94.9
-- [x] rebrand sweep clean (`sweep.py` exit 0)
+- [x] e2e suite green: 63 / 63 at e51cb6d
+- [x] no open S1 or S2 bugs (bugs.md: all 7 fixed)
+- [x] parity: all must-haves done (30/30), feature score 96.8
+- [x] rebrand sweep clean (`sweep.py` exit 0, after removing the generated playwright-report)
 - [-] store listing: not applicable (no mobile app)
 - [x] production build passes (Next.js 16.4.2, `npm audit`: 0 vulnerabilities)
 - [x] privacy page live (/privacy), every processor listed (our server; Resend once email is on). Terms: internal tool, covered by company IT policy, so no separate page
@@ -17,14 +17,19 @@ Date: 2026-10-25  Commit: afcc349  Go from user: **not yet**
 
 ## Production (owner actions marked ★)
 
-Hosting choice: this Windows Server, internal network (architecture.md). Not Vercel: the app stores data in a local SQLite file.
+Hosting choice: this Windows Server (architecture.md). Not Vercel: the app stores data in a local SQLite file.
+Stage 1 (now): reachable on this server only, http://localhost:3100. Hostname, HTTPS and email come later.
 
-- [ ] Fresh production database: a new folder, `SEED_DEMO=0`, migrations run on start
-- [ ] ★ `.env.local` on the server (names from `.env.example`): `APP_URL`, `SEED_DEMO=0`, `INITIAL_ADMIN_NAME/EMAIL/PASSWORD`, `ALERT_TOKEN`, `INBOUND_TOKEN`, `RESEND_API_KEY`, `MAIL_FROM`, `DATABASE_PATH`
+Layout: `C:\Glassworkpp` (a clone of the repo, built), `data\glasswork.db`, `backups\`, `logs\`, `start.cmd`, `backup.cmd`.
+Updating later: `git pull`, `npm ci`, `npm run build` in `C:\Glassworkpp`, then restart the "Glasswork" task.
+
+- [x] Fresh production database: `C:\Glasswork\data`, `SEED_DEMO=0`, migrations run on start
+- [ ] ★ `C:\Glassworkpp\.env.local` written (APP_URL, DATABASE_PATH, SEED_DEMO=0, admin mrudhul555@gmail.com, ALLOW_HTTP=1); **owner types INITIAL_ADMIN_PASSWORD**. Later: (names from `.env.example`): `APP_URL`, `SEED_DEMO=0`, `INITIAL_ADMIN_NAME/EMAIL/PASSWORD`, `ALERT_TOKEN`, `INBOUND_TOKEN`, `RESEND_API_KEY`, `MAIL_FROM`, `DATABASE_PATH`
 - [ ] ★ Resend account; sending domain verified (SPF, DKIM, DMARC below)
 - [ ] ★ Email intake: a support address (e.g. help@yourcompany.com) whose provider posts incoming mail to `https://<host>/api/inbound-email` with the `x-inbound-token` header (Resend inbound, Postmark inbound or a forwarder)
-- [ ] Run as a Windows service so it restarts with the server (Task Scheduler "at startup" running `npm start`, or a service wrapper)
-- [ ] ★ Daily `npm run backup` in Task Scheduler; copy `backups/` off the server
+- [x] Starts with the server: scheduled task "Glasswork" (at startup, SYSTEM) runs `start.cmd`, output to `logs\glasswork.log`
+- [x] Daily backup: scheduled task "Glasswork backup" at 02:00 runs `backup.cmd`, keeps 14
+- [ ] ★ Copy `C:\Glassworkackups` off the server (another disk or share)
 - [-] Stripe, OAuth: not used
 
 ## Domain (★ IT/network owner)
@@ -47,4 +52,4 @@ HTTPS: put IIS (with URL Rewrite + ARR) or Caddy in front of port 3000 with the 
 - [ ] Core flow on the live site: raise a request on a phone, reply as an agent, resolve, rate
 - [ ] Error log: the service's stdout/stderr kept in a log file
 
-Live URL: not deployed yet.
+Live URL: http://localhost:3100 (this server only), once the admin password is set and the task started.
